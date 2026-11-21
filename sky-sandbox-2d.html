@@ -106,11 +106,10 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 #rwb{top:6px;bottom:auto;left:70px;right:auto;transform:none;width:auto;max-width:230px;height:auto;padding:3px 9px;font-size:10px;line-height:1.3;white-space:normal;pointer-events:auto;cursor:pointer}
 #rwb.min .ln,#rwb.min .d{display:none}
 @media (orientation:portrait){#rwb{top:6px;left:8px;right:auto;max-width:calc(100vw - 110px)}}
-#ver{position:fixed;left:6px;bottom:3px;font:9px ui-monospace,monospace;color:rgba(255,255,255,.7);text-shadow:0 0 3px #000;z-index:50;pointer-events:none}
+#ver{position:fixed;left:8px;bottom:6px;font:700 14px ui-monospace,monospace;color:#fff;background:rgba(0,0,0,.65);padding:3px 9px;border-radius:8px;z-index:50;pointer-events:none}#hud:not(.hidden)~#ver{display:none}
 @media (orientation:portrait){#info{font-size:11px;line-height:1.35;padding:4px 7px}#top{left:118px;right:74px;max-width:none;justify-content:flex-start;gap:3px}#top .ib{width:40px;height:40px;font-size:16px}#top .ib::after{font-size:7px}#warn{font-size:10px;gap:5px}}
 </style></head><body>
 <canvas id="c"></canvas>
-<span id="ver">v1.0.2 · 2026-11-21 19:51 UTC</span>
 <div id="menu" class="scr"><h1>✈️ Sky Sandbox 2D</h1><p>Free flight. No coins, no missions. Keys: W/S throttle · A nose up, D nose down · F/G flaps · Q spoilers · B or Space brakes · R runway · T air start.</p>
 <div id="rws" style="margin-bottom:10px"></div><div class="grid" id="cards"></div><button id="newBtn" class="btn big">+ Build new plane</button><button id="mapBtn" class="btn big">Map editor</button></div>
 <div id="hud" class="hidden">
@@ -127,6 +126,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <button class="btn" id="eUndo">Undo</button><button class="btn" id="eMir">Mirror</button><button class="btn" id="eClear">Clear</button><button class="btn big" id="eFly">Save &amp; Fly</button><button class="btn" id="eBack">Back</button></div>
 <div id="designer" class="scr hidden"><h1>Aircraft Designer</h1><p>Real aerodynamics: lift slope from aspect ratio, induced drag, stall, and stability from CG vs wing position and tail size.</p><canvas id="dc" width="650" height="250"></canvas><div id="dstats" style="font-size:13px;margin:8px 0;line-height:1.6"></div><div id="dsl" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 14px"></div><div style="margin-top:10px"><input id="dname" maxlength="20" placeholder="Name"><label>Body <input type="color" id="d1"></label><label>Livery <input type="color" id="d2"></label></div><button class="btn big" id="dFly">Save &amp; Fly</button><button class="btn" id="dBack">Back</button></div>
 <div id="mapEd" class="scr hidden"><h1>Map Editor</h1><p>Drag on the terrain to shape it. Runways stay flat. Max height 900 m.</p><div id="mtools"></div><canvas id="mc" width="650" height="300"></canvas><button class="btn big" id="mDone">Save &amp; Back</button><button class="btn" id="mReset">Reset map</button></div>
+<span id="ver">v1.0.3 · 2026-11-21 19:52 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'}};
@@ -402,8 +402,9 @@ function drawSim(){LV=sim.p.c||DEF;GS.p=sim.gp;GS.c=sim.comp;GD=sim.dop;GS.r=sim
  if(sim.crash>0){ctx.globalAlpha=.6}
  DR(ctx,sim.live,s.cx,s.cy,Z,sim.em.fire?.8+Math.random()*.9:(sim.fuel>0&&!sim.em.fail&&sim.on?sim.thr:0),sim.t*40);GS.f=GS.s=0;ctx.restore();
  if(sim.crash>0){ctx.fillStyle='rgba(255,120,0,.8)';const X=W/2+(sim.x-camx)*Z,Y=(H-130)*.58-(sim.y-camy)*Z;ctx.beginPath();ctx.arc(X,Y,(1.8-sim.crash)*30*Z/6,0,7);ctx.fill()}}
+const VT=$('ver').textContent.replace(' UTC','').split(' · ');
 function hud(){const s=sim.s,v=Math.hypot(sim.vx,sim.vy);
- $('info').innerHTML=`${sim.p.name.replace(/</g,'')}<br>SPD ${(v*3.6).toFixed(0)} km/h<br>ALT ${Math.max(0,sim.y-sim.hg-gh(sim.x)).toFixed(0)} m<br>PITCH ${(sim.th*57.3).toFixed(0)}°<br>THR ${(sim.thr*100).toFixed(0)}%<br>FUEL ${(sim.fuel/s.fuel*100|0)}%<br>FLAPS ${sim.fl}${sim.sp?' · SPOILERS':''}${K.br?' · BRAKES':''}`+(sim.stall?'<br><span style="color:#ff5252">STALL</span>':'');
+ $('info').innerHTML=`${sim.p.name.replace(/</g,'')}<br>SPD ${(v*3.6).toFixed(0)} km/h<br>ALT ${Math.max(0,sim.y-sim.hg-gh(sim.x)).toFixed(0)} m<br>PITCH ${(sim.th*57.3).toFixed(0)}°<br>THR ${(sim.thr*100).toFixed(0)}%<br>FUEL ${(sim.fuel/s.fuel*100|0)}%<br>FLAPS ${sim.fl}${sim.sp?' · SPOILERS':''}${K.br?' · BRAKES':''}`+`<br><span style="font-size:11px;opacity:.9">${VT[0]}<br>${VT[1].slice(5)}</span>`+(sim.stall?'<br><span style="color:#ff5252">STALL</span>':'');
  $('ts').firstChild.style.height=sim.thr*100+'%';gauges()}
 let last=performance.now();
 function loop(n){const dt=Math.min(.033,(n-last)/1000);last=n;
