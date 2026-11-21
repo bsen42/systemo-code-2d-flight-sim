@@ -137,7 +137,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="res" class="hidden"></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.17 · 2026-11-21 22:20 UTC</span>
+<span id="ver">v1.0.18 · 2026-11-21 22:27 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
@@ -421,6 +421,7 @@ const cv=$('c'),ctx=cv.getContext('2d');let W=0,H=0;
 function rs(){const d=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
 addEventListener('resize',rs);rs();
 const K={up:0,down:0,tu:0,td:0,br:0};let MP=0,msx=null,msy=null;let Z=14,camx=0,camy=5;
+function snapWheels(){const s=sim.s,sn=Math.sin(sim.th),cs=Math.cos(sim.th);let m=1e9;for(const q of sim.live){const g=q.t=='gear';if(!(q.t=='wheel'||(g&&(q.gp==null?sim.gp:q.gp)<=.5)))continue;const dx=q.x-s.cx,dy=q.y-s.cy,b=sim.y+dx*sn+dy*cs-(g?1:.8)-gh(sim.x+dx*cs-dy*sn);if(b<m)m=b}if(m<1e8&&Math.abs(m)<2)sim.y-=m}
 function tailMax(ps,s){for(let th=0;th<=.5;th+=.005){const sn=Math.sin(th),cs=Math.cos(th);let mw=1e9,mo=1e9;for(const q of ps){const g=q.t=='gear',w=g||q.t=='wheel',dx=q.x-s.cx,dy=q.y-s.cy,b=dx*sn+dy*cs-(g?1:w?.8:.5);if(w)mw=Math.min(mw,b);else mo=Math.min(mo,b)}if(mw<1e8&&mo<mw-.02)return Math.max(0,th-.01)}return .5}
 function startFlight(p,air){cur=p;const s=stats(p.parts);let low=0;
  for(const q of p.parts)low=Math.min(low,q.y-s.cy-(q.t=='gear'?1:q.t=='wheel'?.8:.5));
@@ -430,7 +431,7 @@ function startFlight(p,air){cur=p;const s=stats(p.parts);let low=0;
  $('res').classList.add('hidden');$('statsBtn').classList.add('hidden');camx=sim.x;camy=sim.y;mode='fly';$('menu').classList.add('hidden');$('editor').classList.add('hidden');$('designer').classList.add('hidden');$('hud').classList.remove('hidden');$('msg').textContent=''}
 function step(dt){const s=sim.s;sim.t+=dt;
  if(sim.crash>0){fx(dt);sim.rt=(sim.rt||0)+dt;if(sim.rt>2&&!sim.st.shown)offerResults('crash',sim.why);return}
- {const gs=sim.live.filter(q=>q.t=='gear');if(gs.length){for(const q of gs){if(q.gp==null)q.gp=sim.gp;if(!q.jam)q.gp+=Math.sign(sim.gu-q.gp)*Math.min(Math.abs(sim.gu-q.gp),dt*.5)}sim.gp=gs.reduce((a,q)=>a+q.gp,0)/gs.length}else sim.gp+=Math.sign(sim.gu-sim.gp)*Math.min(Math.abs(sim.gu-sim.gp),dt*.5)}sim.dop+=Math.sign(sim.dg-sim.dop)*Math.min(Math.abs(sim.dg-sim.dop),dt*1.5);sim.comp=Math.max(sim.gnd?.3:0,sim.comp-dt*1.2);sim.fa+=Math.sign(sim.fl/3-sim.fa)*Math.min(Math.abs(sim.fl/3-sim.fa),dt*.9);sim.sa+=Math.sign(sim.sp-sim.sa)*Math.min(Math.abs(sim.sp-sim.sa),dt*3);sim.ws=sim.gnd?sim.vx/.3:(sim.ws||0)*Math.max(0,1-dt*.6);sim.wr=(sim.wr||0)+sim.ws*dt;sim.ga=(sim.ga||0)+((sim.y-sim.hg-gh(sim.x)>1.5?1:0)-(sim.ga||0))*Math.min(1,dt*2.5);sim.gb=(sim.gb||0)+((sim.y-sim.hg-gh(sim.x)>4?1:0)-(sim.gb||0))*Math.min(1,dt*3);sim.gnd=0;fx(dt);const ahd=gh(sim.x+sim.vx*7);sim.ter=sim.vx>8&&sim.y-sim.hg-gh(sim.x)>3&&ahd>gh(sim.x)+8&&sim.y+sim.vy*5-sim.hg-ahd<30;const el=sim.al?autoEl(dt):(K.up||K.down||!MP)?K.up-K.down:mpEl();sim.thr=Math.max(0,Math.min(1,sim.thr+(K.tu-K.td)*dt*1.2));
+ {const gs=sim.live.filter(q=>q.t=='gear');if(gs.length){for(const q of gs){if(q.gp==null)q.gp=sim.gp;if(!q.jam)q.gp+=Math.sign(sim.gu-q.gp)*Math.min(Math.abs(sim.gu-q.gp),dt*.5)}sim.gp=gs.reduce((a,q)=>a+q.gp,0)/gs.length}else sim.gp+=Math.sign(sim.gu-sim.gp)*Math.min(Math.abs(sim.gu-sim.gp),dt*.5)}sim.dop+=Math.sign(sim.dg-sim.dop)*Math.min(Math.abs(sim.dg-sim.dop),dt*1.5);sim.comp=Math.max(sim.gnd?.3:0,sim.comp-dt*1.2);sim.fa+=Math.sign(sim.fl/3-sim.fa)*Math.min(Math.abs(sim.fl/3-sim.fa),dt*.9);sim.sa+=Math.sign(sim.sp-sim.sa)*Math.min(Math.abs(sim.sp-sim.sa),dt*3);sim.ws=sim.gnd?sim.vx/.3:(sim.ws||0)*Math.max(0,1-dt*.6);sim.wr=(sim.wr||0)+sim.ws*dt;sim.ga=(sim.ga||0)+((sim.y-sim.hg-gh(sim.x)>1.5?1:0)-(sim.ga||0))*Math.min(1,dt*2.5);sim.gl=Math.max(0,(sim.gl||0)-dt);sim.gb=(sim.gb||0)+((sim.y-sim.hg-gh(sim.x)>4?1:0)-(sim.gb||0))*Math.min(1,dt*3);sim.gnd=0;fx(dt);const ahd=gh(sim.x+sim.vx*7);sim.ter=sim.vx>8&&sim.y-sim.hg-gh(sim.x)>3&&ahd>gh(sim.x)+8&&sim.y+sim.vy*5-sim.hg-ahd<30;const el=sim.al?autoEl(dt):(K.up||K.down||!MP)?K.up-K.down:mpEl();sim.thr=Math.max(0,Math.min(1,sim.thr+(K.tu-K.td)*dt*1.2));
  const em=sim.em,eng0=sim.live.filter(q=>isEng(q.t));em.fire=eng0.some(q=>q.fire)?1:0;em.dead=eng0.filter(q=>q.dead).length;sim.ep+=(sim.thr-sim.ep)*Math.min(1,dt*(sim.thr>sim.ep?.9:1.6));for(const q of eng0)if(q.fire){q.ft=(q.ft||0)+dt;if(q.ft>14)lose([q],10)}
  const rho=Math.exp(-sim.y/9000),wx=em.turb?Math.sin(sim.t*.9)*6+Math.sin(sim.t*2.3)*4:0,wy=em.turb?Math.sin(sim.t*1.7)*5+Math.sin(sim.t*4.1)*3:0,vx=sim.vx-wx,vy=sim.vy-wy,v2=vx*vx+vy*vy,v=Math.sqrt(v2);
  let aoa=0;if(v>1){aoa=sim.th-Math.atan2(vy,vx);while(aoa>Math.PI)aoa-=2*Math.PI;while(aoa<-Math.PI)aoa+=2*Math.PI}
@@ -450,7 +451,7 @@ function step(dt){const s=sim.s;sim.t+=dt;
  const tl=s.TL,ac=Math.max(-.8,Math.min(.8,aoa));
  const wl=Math.max(0,Math.min(.9,(sim.nw?1-lv.filter(q=>isWing(q.t)).length/sim.nw:0)+(em.wing?.25:0)));
  const kth=Math.max(-.12,Math.min(.12,-(s.ty||0)*th/(M*40)))*Math.min(1,(sim.ga||0)*2),wash=60*sim.ep*(s.thrust?s.THP/s.thrust:0)*(sim.fuel>0&&sim.on?1:0),qa=(sim.ga>.5?Math.max(v2,60):v2)+wash;
- let al=(qa/900)*(el*2*(1+tl*.5)-(ac-kth)*3*(.5+tl*.5)*s.sm-wl*1.4)*Math.sqrt(12/M)-3.5*sim.om;
+ let al=(qa/900)*(el*2*(1+tl*.5)-(ac-kth)*3*(.5+tl*.5)*s.sm-wl*1.4)*Math.sqrt(12/M)-3.5*sim.om-(sim.ga>.5?Math.max(0,1-qa/700)*1.5*Math.sin(sim.th):0);
  sim.om+=al*dt;sim.th+=sim.om*dt;sim.vx+=Fx/M*dt;sim.vy+=Fy/M*dt;sim.x+=sim.vx*dt;sim.y+=sim.vy*dt;
  engFx(dt,v);
  // ground
@@ -466,10 +467,11 @@ function step(dt){const s=sim.s;sim.t+=dt;
    if(bd.length&&(hd>4.5||v>38)){lose(bd,hd);if(hd>9)sim.vy*=.5}
    if(sim.crash>0)return;sim.vy=sl*sim.vx}
   if(cw&&!co)sim.vx-=sim.vx*.012*dt;else sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),(cw?.25:.5)*G*dt);
-  if((K.br||(sim.al&&sim.alAir))&&cw)sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),(20+Math.abs(sim.vx)*.5)*dt);
+  if((K.br||(sim.al&&sim.alAir))&&(cw||sim.gl>0)){const bd=(9+Math.abs(sim.vx)*.12)*dt;sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),bd)}
   if(cw&&sim.th<0){sim.th=0;if(sim.om<0)sim.om=0}
   if(cw&&el<.05&&sim.th>0){const tgt=v>16?Math.min(.13,(sim.tm==null?.13:sim.tm)*.85):0;if(sim.th>tgt+.004){sim.th=Math.max(tgt,sim.th-((sim.th-tgt)*Math.min(1,dt*3)+dt*.12));if(sim.om>0)sim.om=0}}
   if(sim.tm!=null&&el<.05&&sim.th>sim.tm*.9){sim.th+=(sim.tm*.9-sim.th)*Math.min(1,dt*6);if(sim.om>0)sim.om*=.5}
+  if(cw)snapWheels();sim.gl=cw?.25:sim.gl
   if(cw&&!co&&v>16&&!K.up&&!K.down&&s.S)sim.th+=(Math.min(.13,(sim.tm==null?.13:sim.tm)*.85)-sim.th)*dt*1.2;
   if(!cw)sim.om*=.5;
   if(Math.abs(sim.vx)<.05&&sim.thr==0)sim.vx=0}
