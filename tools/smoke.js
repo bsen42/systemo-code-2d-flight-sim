@@ -22,7 +22,7 @@ for(let i=0;i<names.length;i++){
  const r=R(`(()=>{const p=presets[${i}],s=stats(p.parts);const fin=[s.M,s.S,s.thrust,s.fuel,s.cx,s.cy].every(Number.isFinite);
   startFlight(p,false);sim.thr=1;let maxy=0,crashed=0;for(let k=0;k<1500;k++){const sp=Math.hypot(sim.vx,sim.vy),agl=sim.y-sim.hg-gh(sim.x);K.up=(sp>26&&agl<12&&!sim.crash)?1:0;step(1/60);maxy=Math.max(maxy,sim.y-sim.hg);if(sim.crash>0)crashed=1}
   K.up=0;return {fin,E:s.E,maxy,v:Math.hypot(sim.vx,sim.vy),crashed,live:sim.live.length,n:p.parts.length}})()`);
- ok(r.fin,names[i]+': stats sonlu'); if(r.E>0) ok(r.maxy>3||r.v>10,`${names[i]}: tam gazda kalkis/hizlanma (maxAGL=${r.maxy.toFixed(0)}, v=${r.v.toFixed(0)})`);
+ ok(r.fin,names[i]+': stats sonlu'); if(r.E>0) ok(r.maxy>10,`${names[i]}: tam gazda kalkis/hizlanma (maxAGL=${r.maxy.toFixed(0)}, v=${r.v.toFixed(0)})`);
 }
 // 0 gazda enerji kazanci olmamali (hava baslangici, gaz 0)
 const gl=R(`(()=>{startFlight(presets[0],true);sim.thr=0;const y0=sim.y;let mx=0;for(let k=0;k<1800;k++){step(1/60);mx=Math.max(mx,sim.y-y0)}return mx})()`);
@@ -32,4 +32,8 @@ for(const k of['fire','bird','leak','fail','wing','turb','gear','dpop','ext','fi
 // auto-land
 try{const a=R(`(()=>{startFlight(presets[0],true);sim.al=1;let c=0;for(let i=0;i<9000;i++){step(1/60);if(sim.crash>0)c=1}return {al:sim.al,c,v:Math.hypot(sim.vx,sim.vy),agl:sim.y-sim.hg-gh(sim.x)}})()`);
  ok(!a.c,'auto-land: crash yok');ok(a.v<5&&a.agl<3,`auto-land: durdu (v=${a.v.toFixed(1)})`)}catch(e){ok(false,'auto-land '+e.message)}
+// auto-land acikken kalkis kosusunda frenlememeli
+try{const a=R(`(()=>{startFlight(presets[0],false);sim.al=1;sim.alAir=0;sim.thr=1;for(let i=0;i<300;i++)step(1/60);return {v:sim.vx,al:sim.al}})()`);ok(a.v>10,`auto-land yerde frenlemiyor (v=${a.v.toFixed(0)})`)}catch(e){ok(false,'auto-land yer '+e.message)}
+// kanat kaybi -> burun asagi egilimi (asimetri)
+try{const w=R(`(()=>{const run=b=>{startFlight(presets[4],true);sim.thr=.7;for(let i=0;i<60;i++)step(1/60);if(b){const ws=sim.live.filter(q=>q.t=='wing');lose(ws.slice(0,Math.floor(ws.length/2)),5)}for(let i=0;i<120;i++)step(1/60);return sim.th};return [run(0),run(1)]})()`);ok(w[1]<w[0]-.05,`kanat kaybi burnu asagi ceker (saglam ${w[0].toFixed(2)} -> hasarli ${w[1].toFixed(2)})`)}catch(e){ok(false,'kanat asimetri '+e.message)}
 console.log(fail?`\n${fail} TEST BASARISIZ`:'\nTUM TESTLER GECTI');process.exit(fail?1:0);
