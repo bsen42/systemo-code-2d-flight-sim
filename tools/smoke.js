@@ -20,8 +20,8 @@ R(`var __r=[];`);
 const names=R(`presets.map(p=>p.name)`);
 for(let i=0;i<names.length;i++){
  const r=R(`(()=>{const p=presets[${i}],s=stats(p.parts);const fin=[s.M,s.S,s.thrust,s.fuel,s.cx,s.cy].every(Number.isFinite);
-  startFlight(p,false);sim.thr=1;let maxy=0,crashed=0;for(let k=0;k<1500;k++){const sp=Math.hypot(sim.vx,sim.vy),agl=sim.y-sim.hg-gh(sim.x);K.up=(sp>26&&agl<12&&!sim.crash)?1:0;step(1/60);maxy=Math.max(maxy,sim.y-sim.hg);if(sim.crash>0)crashed=1}
-  K.up=0;return {fin,E:s.E,maxy,v:Math.hypot(sim.vx,sim.vy),crashed,live:sim.live.length,n:p.parts.length}})()`);
+  startFlight(p,false);sim.thr=1;let maxy=0,crashed=0;const vs=Math.sqrt((s.M+s.fuel*.05)*9.8/(.05*Math.max(.1,s.S)*(s.a*s.sa+.12)));for(let k=0;k<2400;k++){const sp=Math.hypot(sim.vx,sim.vy);K.up=(sp>1.15*vs&&sim.th<.22&&!sim.crash)?1:0;K.down=sim.th>.35?1:0;step(1/60);maxy=Math.max(maxy,sim.y-sim.hg);if(sim.crash>0)crashed=1}
+  K.down=0;K.up=0;return {fin,E:s.E,maxy,v:Math.hypot(sim.vx,sim.vy),crashed,live:sim.live.length,n:p.parts.length}})()`);
  ok(r.fin,names[i]+': stats sonlu'); if(r.E>0) ok(r.maxy>10,`${names[i]}: tam gazda kalkis/hizlanma (maxAGL=${r.maxy.toFixed(0)}, v=${r.v.toFixed(0)})`);
 }
 // 0 gazda enerji kazanci olmamali (hava baslangici, gaz 0)
@@ -36,4 +36,12 @@ try{const a=R(`(()=>{startFlight(presets[0],true);sim.al=1;let c=0;for(let i=0;i
 try{const a=R(`(()=>{startFlight(presets[0],false);sim.al=1;sim.alAir=0;sim.thr=1;for(let i=0;i<300;i++)step(1/60);return {v:sim.vx,al:sim.al}})()`);ok(a.v>10,`auto-land yerde frenlemiyor (v=${a.v.toFixed(0)})`)}catch(e){ok(false,'auto-land yer '+e.message)}
 // kanat kaybi -> burun asagi egilimi (asimetri)
 try{const w=R(`(()=>{const run=b=>{startFlight(presets[4],true);sim.thr=.7;for(let i=0;i<60;i++)step(1/60);if(b){const ws=sim.live.filter(q=>q.t=='wing');lose(ws.slice(0,Math.floor(ws.length/2)),5)}for(let i=0;i<120;i++)step(1/60);return sim.th};return [run(0),run(1)]})()`);ok(w[1]<w[0]-.05,`kanat kaybi burnu asagi ceker (saglam ${w[0].toFixed(2)} -> hasarli ${w[1].toFixed(2)})`)}catch(e){ok(false,'kanat asimetri '+e.message)}
+// sifir hiz + sifir gazda yerde burun kalkmamali
+try{const a=R(`(()=>{startFlight(presets[4],false);K.up=1;for(let i=0;i<240;i++)step(1/60);K.up=0;return sim.th})()`);ok(Math.abs(a)<.02,`durgun ucak pitch yapmiyor (th=${a.toFixed(3)})`)}catch(e){ok(false,'durgun pitch '+e.message)}
+// secilen motor yanar, digerleri yanmaz; sadece o motor kopar
+try{const r=R(`(()=>{startFlight(presets[4],true);const e=sim.live.filter(q=>isEng(q.t));const n0=e.length;e[0].fire=1;e[0].ft=0;step(1/60);const only=!!sim.em.fire&&!e[1].fire;for(let i=0;i<60*16;i++)step(1/60);return {only,n0,n1:sim.live.filter(q=>isEng(q.t)).length}})()`);ok(r.only&&r.n1==r.n0-1,`tek motor yangini (motor ${r.n0}->${r.n1})`)}catch(e){ok(false,'motor yangin '+e.message)}
+// secilen iniş takimi sikisir
+try{const r=R(`(()=>{startFlight(presets[4],true);const g=sim.live.filter(q=>q.t=='gear');g[0].jam=1;sim.gu=0;for(let i=0;i<60*4;i++)step(1/60);return {a:g[0].gp,b:g[1].gp}})()`);ok(r.a>.95&&r.b<.05,`tek iniş takimi sikisti (sikisan ${r.a.toFixed(2)}, diger ${r.b.toFixed(2)})`)}catch(e){ok(false,'gear jam '+e.message)}
+// iniş / kaza sonrasi sonuc ekrani
+try{const r=R(`(()=>{startFlight(presets[0],true);sim.al=1;for(let i=0;i<9000;i++){step(1/60)}const a=sim.st.shown,td=sim.st.td;startFlight(presets[0],true);sim.vy=-70;sim.y=gh(sim.x)+25;for(let i=0;i<600;i++)step(1/60);return {a,td:!!td,b:sim.st.shown,crash:sim.crash>0}})()`);ok(r.a==1&&r.td,'inis sonrasi sonuc ekrani acildi');ok(r.b==1&&r.crash,'kaza sonrasi sonuc ekrani acildi')}catch(e){ok(false,'sonuc ekrani '+e.message)}
 console.log(fail?`\n${fail} TEST BASARISIZ`:'\nTUM TESTLER GECTI');process.exit(fail?1:0);
