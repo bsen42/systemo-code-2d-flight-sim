@@ -137,7 +137,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="res" class="hidden"></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.14 · 2026-11-21 22:08 UTC</span>
+<span id="ver">v1.0.15 · 2026-11-21 22:12 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
@@ -511,7 +511,7 @@ function drawWorld(){const alt=Math.max(0,camy);const[c1,c2]=skyCol(alt);const g
   ctx.fillStyle='#fff';ctx.font='12px sans-serif';const m0=Math.floor((camx-W/2/Z)/100)*100;
   }}
 function crashNow(v,why){sim.why=why;sim.cv=v;sim.chd=Math.max(sim.chd||0,Math.abs(sim.vy));const s=sim.s,sn=Math.sin(sim.th),cs=Math.cos(sim.th),k=.25+Math.min(v,80)*.03;sim.crash=4.5;sim.shake=1;
- sim.deb.push(...sim.live.map(q=>{const dx=q.x-s.cx,dy=q.y-s.cy,rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;return{t:q.t,x:sim.x+rx,y:sim.y+ry,vx:sim.vx*.6-sim.om*ry+(Math.random()-.5)*k*6,vy:Math.abs(sim.vy)*.3+Math.random()*k*5,a:sim.th,w:(Math.random()-.5)*k*5,fire:Math.random()<.5}}));
+ sim.deb.push(...sim.live.map(q=>{const dx=q.x-s.cx,dy=q.y-s.cy,rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;return{t:q.t,v:q.v,txt:q.txt,x:sim.x+rx,y:sim.y+ry,vx:sim.vx*.6-sim.om*ry+(Math.random()-.5)*k*6,vy:Math.abs(sim.vy)*.3+Math.random()*k*5,a:sim.th,w:(Math.random()-.5)*k*5,fire:Math.random()<.5}}));
  sim.pt=[];boom(sim.x,sim.y,.7+Math.min(v,80)/60);
  $('msg').textContent='CRASHED'}
 /* ---- effects ---- */
@@ -572,7 +572,8 @@ function fx(dt){for(const d of sim.deb){d.vy-=G*dt;d.x+=d.vx*dt;d.y+=d.vy*dt;d.a
  sim.pt=sim.pt.filter(p=>p.l>0);sim.shake=Math.max(0,sim.shake-dt*1.5)}
 function drawDebris(){const X=x=>W/2+(x-camx)*Z,Y=y=>(H-130)*.58-(y-camy)*Z;
  drawBirds(X,Y);
- for(const d of sim.deb){ctx.save();ctx.translate(X(d.x),Y(d.y));ctx.rotate(-d.a);ctx.scale(Z,Z);dp(ctx,d.t,0,0,1,1);ctx.restore()}
+ GS.p=0;GS.c=0;GS.bay=-.5;GS.d=1;GS.wf=GS.wb=GS.pyl=0;GS.f=GS.s=GS.a=0;
+ for(const d of sim.deb){ctx.save();ctx.translate(X(d.x),Y(d.y));ctx.rotate(-d.a);ctx.scale(Z,Z);dp(ctx,d.t,0,0,1,1,{v:d.v,txt:d.txt});ctx.restore()}
  drawPt(X,Y)}
 function drawSim(){LV=sim.p.c||DEF;GS.p=sim.gp;GS.c=sim.comp;GD=sim.dop;GS.r=sim.wr||0;GS.f=sim.fa||0;GS.s=sim.sa||0;GS.a=sim.gb||0;GS.t=sim.gnd?Math.max(-.3,Math.min(.3,sim.th)):0;if(sim.deb.length||sim.pt.length||sim.birds.length)drawDebris();if(sim.crash>0)return;const s=sim.s;ctx.save();ctx.translate(W/2+(sim.x-camx)*Z,(H-130)*.58-(sim.y-camy)*Z);ctx.rotate(-sim.th);
  if(sim.crash>0){ctx.globalAlpha=.6}
@@ -606,7 +607,7 @@ $('zp').onclick=()=>Z=Math.min(40,Z*1.25);$('zm').onclick=()=>Z=Math.max(3,Z*.8)
 const GS={p:0,c:0,r:0,t:0,f:0,s:0,d:1,bay:-.5,n:0,a:0,ctop:0,pyl:0,wf:0,wb:0};let GD=0;
 function btm(q){const s=sim.s,dx=q.x-s.cx,dy=q.y-s.cy,sn=Math.sin(sim.th),cs=Math.cos(sim.th);return sim.y+dx*sn+dy*cs-(q.t=='gear'?1:q.t=='wheel'?.8:.5)-gh(sim.x+dx*cs-dy*sn)}
 function lose(a,k){if(!a.length)return;const s=sim.s,sn=Math.sin(sim.th),cs=Math.cos(sim.th);
- for(const q of a){const i=sim.live.indexOf(q);if(i<0)continue;sim.live.splice(i,1);const dx=q.x-s.cx,dy=q.y-s.cy,rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;puff(sim.x+rx,sim.y+ry,k);if(isWing(q.t))sayOnce('wing','Wing damage',4);sim.deb.push({t:q.t,x:sim.x+rx,y:sim.y+ry,vx:sim.vx*.7-sim.om*ry+(Math.random()-.5)*k,vy:sim.vy*.3+Math.random()*k*.6,a:sim.th,w:(Math.random()-.5)*k,fire:isEng(q.t)})}
+ for(const q of a){const i=sim.live.indexOf(q);if(i<0)continue;sim.live.splice(i,1);const dx=q.x-s.cx,dy=q.y-s.cy,rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;puff(sim.x+rx,sim.y+ry,k);if(isWing(q.t))sayOnce('wing','Wing damage',4);sim.deb.push({t:q.t,v:q.v,txt:q.txt,x:sim.x+rx,y:sim.y+ry,vx:sim.vx*.7-sim.om*ry+(Math.random()-.5)*k,vy:sim.vy*.3+Math.random()*k*.6,a:sim.th,w:(Math.random()-.5)*k,fire:isEng(q.t)})}
  const n=stats(sim.live);n.cx=s.cx;n.cy=s.cy;n.fuel=s.fuel;sim.s=n;sim.shake=Math.max(sim.shake,.5);
  if(sim.live.length<sim.p.parts.length*.4)crashNow(Math.hypot(sim.vx,sim.vy),'The plane fell apart')}
 function dial(c,x,lab,val,max,txt){c.save();c.translate(x,50);c.fillStyle='#111';c.beginPath();c.arc(0,0,46,0,7);c.fill();c.strokeStyle='#6fa8c0';c.lineWidth=3;c.beginPath();c.arc(0,0,42,.75*Math.PI,2.25*Math.PI);c.stroke();c.fillStyle='#fff';c.font='bold 11px sans-serif';c.textAlign='center';c.fillText(lab,0,-14);c.font='10px sans-serif';c.fillText(txt,0,32);const a=.75*Math.PI+Math.min(1,Math.max(0,val/max))*1.5*Math.PI;c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*38,Math.sin(a)*38);c.stroke();c.restore()}
