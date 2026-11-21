@@ -137,7 +137,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="res" class="hidden"></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.12 · 2026-11-21 22:02 UTC</span>
+<span id="ver">v1.0.13 · 2026-11-21 22:06 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
@@ -202,12 +202,16 @@ function dp0(c,t,fl,pr,hf,hb,q){
  else if(t=='cockpit'){const v=(q&&q.v)||0;if(v==0){const pth=()=>{c.beginPath();c.moveTo(-.51,-.46);c.bezierCurveTo(-.2,-.54,.2,-.52,.42,-.34);c.bezierCurveTo(.62,-.2,.74,.0,.7,.2);c.bezierCurveTo(.66,.4,.4,.5,.1,.5);c.lineTo(-.51,.5);c.closePath()};c.fillStyle=bodyG(c);pth();c.fill();c.save();pth();c.clip();c.fillStyle=LV[1];c.fillRect(-.51,.18,1.5,.07);c.fillStyle='rgba(0,0,0,.14)';c.fillRect(-.51,.34,1.5,.2);darkGlass(c,()=>{c.beginPath();c.moveTo(-.02,-.42);c.bezierCurveTo(.2,-.46,.36,-.42,.5,-.3);c.bezierCurveTo(.64,-.18,.7,-.04,.66,.08);c.lineTo(.14,.03);c.bezierCurveTo(.04,-.1,-.02,-.26,-.04,-.42);c.closePath()});c.strokeStyle='#eef3f6';c.lineWidth=.04;c.beginPath();c.moveTo(.16,-.43);c.lineTo(.2,-.07);c.moveTo(.34,-.42);c.lineTo(.4,-.03);c.stroke();c.fillStyle='rgba(255,255,255,.2)';c.beginPath();c.moveTo(.02,-.4);c.lineTo(.12,-.41);c.lineTo(.08,-.12);c.lineTo(.01,-.2);c.fill();c.restore();c.strokeStyle='rgba(0,0,0,.25)';c.lineWidth=.03;pth();c.stroke()}
   else{dp0(c,'body',0,0,hf,hb,{nw:1,v:1});c.save();bodyPath(c,hf,hb);c.clip();canopy(c,v,0);c.restore()}}
 
- else if(isWing(t)){const T0={wing:{p:[[.5,-.05],[-.5,-.05],[-.85,.62],[.15,.62]],h:[-.68,.3],L:.46},wingjet:{p:[[.58,-.05],[-.55,-.05],[-.55,.14],[-.12,.62],[.12,.62]],h:[-.55,.1],L:.4},winglong:{p:[[.45,-.05],[-.45,-.05],[-.78,1.0],[-.3,1.0],[.05,.3]],h:[-.62,.5],L:.34},wingshort:{p:[[.5,-.05],[-.5,-.05],[-.62,.34],[.3,.34]],h:[-.56,.15],L:.4}}[t],P=T0.p;
-  const ym=Math.max(...P.map(z=>z[1])),g=c.createLinearGradient(0,-.05,0,ym);g.addColorStop(0,shade(LV[1],.3));g.addColorStop(1,shade(LV[1],-.25));c.fillStyle=g;c.beginPath();c.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)c.lineTo(P[i][0],P[i][1]);c.closePath();c.fill();
-  c.save();c.clip();c.strokeStyle='rgba(0,0,0,.28)';c.lineWidth=.025;c.beginPath();for(let i=1;i<4;i++){const u=i/4;c.moveTo(.6-.4*u,-.05+(ym+.05)*u);c.lineTo(-.95-.4*u,-.05+(ym+.05)*u)}c.stroke();c.fillStyle='rgba(255,255,255,.55)';c.beginPath();c.moveTo(P[0][0],P[0][1]);c.lineTo(P[P.length-1][0]+.0,P[P.length-1][1]);c.lineTo(P[P.length-1][0]-.1,P[P.length-1][1]);c.lineTo(P[0][0]-.08,P[0][1]);c.fill();c.fillStyle='rgba(0,0,0,.25)';c.fillRect(-1,ym-.12,2,.12);c.restore();
-  if(t=='wingjet'){c.fillStyle='#37474f';c.fillRect(-.04,.5,.1,.08);c.fillStyle='#ef5350';c.fillRect(.02,.5,.04,.08)}
-  if(GS.f>.02){const a=GS.f*.95;c.save();c.translate(T0.h[0],T0.h[1]);c.rotate(-a);c.fillStyle='#37474f';c.fillRect(-T0.L,-.05,T0.L,.11);c.fillStyle=LV[1];c.fillRect(-T0.L,-.05,T0.L,.05);c.restore();c.fillStyle='rgba(0,0,0,.55)';c.beginPath();c.arc(T0.h[0],T0.h[1],.05,0,7);c.fill()}
-  if(GS.s>.02){c.save();c.translate(-.1,-.05);c.rotate(GS.s*1.05);c.fillStyle='#263238';c.fillRect(-.5,-.08,.5,.08);c.fillStyle='#ef5350';c.fillRect(-.5,-.08,.12,.08);c.restore()}}
+
+ else if(isWing(t)){const D={wing:{sh:.35,yb:.62,L:.46},wingjet:{sh:.8,yb:.58,L:.4},winglong:{sh:.22,yb:1.0,L:.34},wingshort:{sh:.18,yb:.34,L:.4}}[t],sh=D.sh,ym=D.yb,ov=.02,wf=GS.wf,wb=GS.wb;
+  const g=c.createLinearGradient(0,-.05,0,ym);g.addColorStop(0,shade(LV[1],.3));g.addColorStop(1,shade(LV[1],-.25));c.fillStyle=g;c.beginPath();c.moveTo(.5+ov,-.05);c.lineTo(-.5-ov,-.05);c.lineTo(-.5-sh-ov,ym);c.lineTo(.5-sh+ov,ym);c.closePath();c.fill();
+  c.save();c.clip();c.strokeStyle='rgba(0,0,0,.28)';c.lineWidth=.025;c.beginPath();for(let i=1;i<4;i++){const y=-.05+(ym+.05)*i/4;c.moveTo(-2,y);c.lineTo(2,y)}c.stroke();
+  if(!wf){c.fillStyle='rgba(255,255,255,.55)';c.beginPath();c.moveTo(.5,-.05);c.lineTo(.5-sh,ym);c.lineTo(.5-sh-.1,ym);c.lineTo(.42,-.05);c.fill()}
+  if(!wb){c.fillStyle='rgba(0,0,0,.2)';c.beginPath();c.moveTo(-.5,-.05);c.lineTo(-.5-sh,ym);c.lineTo(-.5-sh+.1,ym);c.lineTo(-.42,-.05);c.fill()}
+  c.fillStyle='rgba(0,0,0,.25)';c.fillRect(-2,ym-.12,4,.12);c.restore();
+  const hx=-.5-sh/2,hy=(ym-.05)/2;
+  if(GS.f>.02){const a=GS.f*.95;c.save();c.translate(hx,hy);c.rotate(-a);c.fillStyle='#37474f';c.fillRect(-D.L-.04,-.05,D.L+.04,.11);c.fillStyle=LV[1];c.fillRect(-D.L-.04,-.05,D.L+.04,.05);c.restore()}
+  if(GS.s>.02){c.save();c.translate(-.1,-.05);c.rotate(GS.s*1.05);c.fillStyle='#263238';c.fillRect(-.56,-.08,.62,.08);c.fillStyle='#ef5350';c.fillRect(-.56,-.08,.12,.08);c.restore()}}
  else if(t=='engine'){c.fillStyle='#37474f';c.fillRect(-.5,-.4,1,.8);c.fillStyle='#90a4ae';c.fillRect(-.5,-.4,1,.15);
   c.fillStyle='rgba(220,220,220,.8)';c.beginPath();c.ellipse(.55,0,.06,.45*Math.abs(Math.cos(pr)),0,0,7);c.fill();
   if(fl>.02){c.fillStyle='#ff9800';c.beginPath();c.moveTo(-.5,-.25);c.lineTo(-.5-fl*1.6,0);c.lineTo(-.5,.25);c.fill()}}
@@ -239,7 +243,7 @@ function wheelDraw(c,x,y,r,rot,twin){if(twin){c.fillStyle='#0b0b0b';c.beginPath(
  c.save();c.translate(x,y);c.rotate(rot);c.fillStyle='#eceff1';for(let i=0;i<5;i++){c.rotate(1.2566);c.beginPath();c.arc(r*.27,0,r*.06,0,7);c.fill()}c.fillStyle='#37474f';c.beginPath();c.arc(0,0,r*.12,0,7);c.fill();c.restore()}
 const PR={wingjet:2,winglong:2,wingshort:2,fan:1.5,tprop:1.5,ajet:1.5,radial:1.5,gear:-1,door:0,tank:1,wheel:-1,body:0,cockpit:1,tail:1,wing:2,engine:1.5,prop:1.5,jet:1.5,label:5};
 function drawPlane(c,ps,cx,cy,s,fl,pr){const st=new Set(ps.map(q=>q.x+','+q.y)),gp0=GS.p;
- for(const q of [...ps].sort((a,b)=>(PR[a.t]||0)-(PR[b.t]||0))){GS.p=q.t=='gear'&&q.gp!=null?q.gp:gp0;GS.ctop=0;GS.pyl=isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&w.y==q.y+1);c.save();c.translate((q.x-cx)*s,-(q.y-cy)*s);c.scale(s,s);if(q.t=='gear'){GS.n=q.x-cx>3?1:0;let up=1;while(up<3&&!st.has(q.x+','+(q.y+up)))up++;if(up>=3)up=1;const ry=q.y+up;GS.bay=-(up-.5);GS.d=(st.has((q.x+1)+','+ry)&&st.has((q.x+2)+','+ry))||!st.has((q.x-1)+','+ry)?1:-1}dp(c,q.t,q.dead?0:(fl||0),q.dead?pr*.1:(pr||0),st.has((q.x+1)+','+q.y),st.has((q.x-1)+','+q.y),q);c.restore()}GS.p=gp0}
+ for(const q of [...ps].sort((a,b)=>(PR[a.t]||0)-(PR[b.t]||0))){GS.p=q.t=='gear'&&q.gp!=null?q.gp:gp0;GS.ctop=0;GS.wf=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x+1&&o.y==q.y);GS.wb=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x-1&&o.y==q.y);GS.pyl=isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&w.y==q.y+1);c.save();c.translate((q.x-cx)*s,-(q.y-cy)*s);c.scale(s,s);if(q.t=='gear'){GS.n=q.x-cx>3?1:0;let up=1;while(up<3&&!st.has(q.x+','+(q.y+up)))up++;if(up>=3)up=1;const ry=q.y+up;GS.bay=-(up-.5);GS.d=(st.has((q.x+1)+','+ry)&&st.has((q.x+2)+','+ry))||!st.has((q.x-1)+','+ry)?1:-1}dp(c,q.t,q.dead?0:(fl||0),q.dead?pr*.1:(pr||0),st.has((q.x+1)+','+q.y),st.has((q.x-1)+','+q.y),q);c.restore()}GS.p=gp0}
 function thumb(cv,ps){const c=cv.getContext('2d');cv.width=300;cv.height=160;c.clearRect(0,0,300,160);
  if(ps.par){const q=ps.par;c.save();c.translate(150,95);drawPar(c,q,q.len/2-.5,(q.dia-1)/2,Math.min(280/(q.len+2),8),0,0);c.restore();return}if(!ps.length)return;const s=stats(ps);let a=1e9,b=-1e9,d=1e9,e=-1e9;
  for(const q of ps){a=Math.min(a,q.x);b=Math.max(b,q.x);d=Math.min(d,q.y);e=Math.max(e,q.y)}
@@ -594,7 +598,7 @@ $('bMenu').onclick=()=>{mode='menu';$('statsBtn').classList.add('hidden');$('hud
 $('bEdit').onclick=()=>{const cu=customs.includes(cur),i=customs.indexOf(cur);cur.par?openDesigner(cur,i,cu):openEditor(cur,i,cu)};
 $('bReset').onclick=()=>startFlight(cur,false);$('bAir').onclick=()=>startFlight(cur,true);
 $('zp').onclick=()=>Z=Math.min(40,Z*1.25);$('zm').onclick=()=>Z=Math.max(3,Z*.8);
-const GS={p:0,c:0,r:0,t:0,f:0,s:0,d:1,bay:-.5,n:0,a:0,ctop:0,pyl:0};let GD=0;
+const GS={p:0,c:0,r:0,t:0,f:0,s:0,d:1,bay:-.5,n:0,a:0,ctop:0,pyl:0,wf:0,wb:0};let GD=0;
 function btm(q){const s=sim.s,dx=q.x-s.cx,dy=q.y-s.cy,sn=Math.sin(sim.th),cs=Math.cos(sim.th);return sim.y+dx*sn+dy*cs-(q.t=='gear'?1:q.t=='wheel'?.8:.5)-gh(sim.x+dx*cs-dy*sn)}
 function lose(a,k){if(!a.length)return;const s=sim.s,sn=Math.sin(sim.th),cs=Math.cos(sim.th);
  for(const q of a){const i=sim.live.indexOf(q);if(i<0)continue;sim.live.splice(i,1);const dx=q.x-s.cx,dy=q.y-s.cy,rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;puff(sim.x+rx,sim.y+ry,k);if(isWing(q.t))sayOnce('wing','Wing damage',4);sim.deb.push({t:q.t,x:sim.x+rx,y:sim.y+ry,vx:sim.vx*.7-sim.om*ry+(Math.random()-.5)*k,vy:sim.vy*.3+Math.random()*k*.6,a:sim.th,w:(Math.random()-.5)*k,fire:isEng(q.t)})}
