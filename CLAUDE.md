@@ -7,3 +7,4 @@
 - Uçak veri modeli: `{t,x,y,v?,txt?}` hücre=1 m, +x burun, +y yukarı. Uçuşta `sim.live` kullan. Zemin ofsetleri: body .5, wheel .8, gear 1.0 (3 yerde aynı kalmalı).
 - Yeni `const/let` eklerken yükleme sırasına (TDZ) dikkat et.
 - Ölü kod (`gen/parO/drawPar/openDesigner/...`) kullanıcı isteğiyle silinmiş özellik; yeniden bağlama.
+- **Sürüm:** sürüm `v1.x.Y` (`#ver` etiketi). Her yayında `bash tools/bump.sh` çalıştır (Y artar, tarih/saat güncellenir). **x'i asla kendin artırma**, sadece kullanıcı isterse.
