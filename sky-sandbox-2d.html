@@ -137,7 +137,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="res" class="hidden"></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.19 · 2026-11-21 22:32 UTC</span>
+<span id="ver">v1.0.21 · 2026-11-22 10:02 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
@@ -166,7 +166,7 @@ function stats(ps){let M=0,sx=0,sy=0,S=0,E=0,TL=0,W=0,TK=0,TH=0,THP=0,B=0,TY=0,A
 function shade(h,f){const n=parseInt(String(h).slice(1),16)||0,r=n>>16&255,g=n>>8&255,b=n&255,k=f<0?0:255,a=Math.abs(f);return 'rgb('+Math.round(r+(k-r)*a)+','+Math.round(g+(k-g)*a)+','+Math.round(b+(k-b)*a)+')'}
 const SO={wing:-.05,wingjet:-.05,winglong:-.05,wingshort:-.05,tail:.5,engine:0,prop:0,jet:0,tank:0,fan:0,tprop:0,ajet:0,radial:0};
 function dp(c,t,fl,pr,hf,hb,q){if(!(t in SO))return dp0(c,t,fl,pr,hf,hb,q);const f=[.72,1,1.3][q&&q.v!=null?q.v:1];if(f==1)return dp0(c,t,fl,pr,hf,hb,q);const o=SO[t];c.save();c.translate(0,o);c.scale(f,f);c.translate(0,-o);dp0(c,t,fl,pr,hf,hb,q);c.restore()}
-function pylon(c){c.fillStyle=shade(LV[0],-.3);c.fillRect(-.12,-.64,.24,.42)}
+function pylon(c){const o=GS.eoff||0;c.fillStyle=shade(LV[0],-.3);c.fillRect(-.12,-.64-o,.24,.42+o)}
 function bodyPath(c,hf,hb){c.beginPath();c.moveTo(-.51,hb?-.5:-.2);if(hf){c.lineTo(.51,-.5);c.lineTo(.51,.5)}else{c.lineTo(0,-.5);c.bezierCurveTo(.4,-.5,.7,-.25,.7,.08);c.bezierCurveTo(.7,.32,.42,.5,.05,.5)}c.lineTo(-.51,hb?.5:.3);c.closePath()}
 function aeroPath(c,hf,hb){c.beginPath();c.moveTo(-.51,hb?-.44:-.1);if(hf){c.lineTo(.51,-.44);c.lineTo(.51,.44)}else{c.lineTo(-.1,-.44);c.bezierCurveTo(.35,-.44,.75,-.22,.9,.05);c.bezierCurveTo(.75,.22,.35,.44,-.05,.44)}c.lineTo(-.51,hb?.44:.12);c.closePath()}
 function glassG(c,y0,y1){const g=c.createLinearGradient(0,y0==null?-.5:y0,0,y1==null?.3:y1);g.addColorStop(0,'#d6f6ff');g.addColorStop(.35,'#6cc0e8');g.addColorStop(.75,'#2a7aa6');g.addColorStop(1,'#123d57');return g}
@@ -247,8 +247,7 @@ function wheelDraw(c,x,y,r,rot,twin){if(twin){c.fillStyle='#0b0b0b';c.beginPath(
  c.save();c.translate(x,y);c.rotate(rot);c.fillStyle='#eceff1';for(let i=0;i<5;i++){c.rotate(1.2566);c.beginPath();c.arc(r*.27,0,r*.06,0,7);c.fill()}c.fillStyle='#37474f';c.beginPath();c.arc(0,0,r*.12,0,7);c.fill();c.restore()}
 const PR={wingjet:2,winglong:2,wingshort:2,fan:1.5,tprop:1.5,ajet:1.5,radial:1.5,gear:-1,door:0,tank:1,wheel:-1,body:0,cockpit:1,tail:1,wing:2,engine:1.5,prop:1.5,jet:1.5,label:5};
 function drawPlane(c,ps,cx,cy,s,fl,pr){const st=new Set(ps.map(q=>q.x+','+q.y)),gp0=GS.p;
- const pz=new Map(ps.map(q=>[q,isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&(w.y==q.y||(w.y==q.y+1&&w.t=='winglong')))?3:(PR[q.t]||0)]));
- for(const q of [...ps].sort((a,b)=>pz.get(a)-pz.get(b))){GS.p=q.t=='gear'&&q.gp!=null?q.gp:gp0;GS.ctop=0;GS.wf=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x+1&&o.y==q.y);GS.wb=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x-1&&o.y==q.y);GS.pyl=isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&w.y==q.y+1);c.save();c.translate((q.x-cx)*s,-(q.y-cy)*s);c.scale(s,s);if(q.t=='gear'){GS.n=q.x-cx>3?1:0;let up=1;while(up<3&&!st.has(q.x+','+(q.y+up)))up++;if(up>=3)up=1;const ry=q.y+up;GS.bay=-(up-.5);GS.d=(st.has((q.x+1)+','+ry)&&st.has((q.x+2)+','+ry))||!st.has((q.x-1)+','+ry)?1:-1}dp(c,q.t,q.dead?0:(fl||0),q.dead?pr*.1:(pr||0),st.has((q.x+1)+','+q.y),st.has((q.x-1)+','+q.y),q);c.restore()}GS.p=gp0}
+  for(const q of [...ps].sort((a,b)=>(PR[a.t]||0)-(PR[b.t]||0))){GS.p=q.t=='gear'&&q.gp!=null?q.gp:gp0;GS.ctop=0;GS.wf=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x+1&&o.y==q.y);GS.wb=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x-1&&o.y==q.y);GS.eoff=0;if(isEng(q.t)){if(ps.some(w=>isWing(w.t)&&w.x==q.x&&w.y==q.y))GS.eoff=.62;else if(ps.some(w=>w.t=='winglong'&&w.x==q.x&&w.y==q.y+1))GS.eoff=.42}GS.pyl=isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&(w.y==q.y+1||w.y==q.y));c.save();c.translate((q.x-cx)*s,-(q.y-cy)*s);c.scale(s,s);if(GS.eoff)c.translate(0,GS.eoff);if(q.t=='gear'){GS.n=q.x-cx>3?1:0;let up=1;while(up<3&&!st.has(q.x+','+(q.y+up)))up++;if(up>=3)up=1;const ry=q.y+up;GS.bay=-(up-.5);GS.d=(st.has((q.x+1)+','+ry)&&st.has((q.x+2)+','+ry))||!st.has((q.x-1)+','+ry)?1:-1}dp(c,q.t,q.dead?0:(fl||0),q.dead?pr*.1:(pr||0),st.has((q.x+1)+','+q.y),st.has((q.x-1)+','+q.y),q);c.restore()}GS.p=gp0}
 function thumb(cv,ps){const c=cv.getContext('2d');cv.width=300;cv.height=160;c.clearRect(0,0,300,160);
  if(ps.par){const q=ps.par;c.save();c.translate(150,95);drawPar(c,q,q.len/2-.5,(q.dia-1)/2,Math.min(280/(q.len+2),8),0,0);c.restore();return}if(!ps.length)return;const s=stats(ps);let a=1e9,b=-1e9,d=1e9,e=-1e9;
  for(const q of ps){a=Math.min(a,q.x);b=Math.max(b,q.x);d=Math.min(d,q.y);e=Math.max(e,q.y)}
@@ -609,7 +608,7 @@ $('bMenu').onclick=()=>{mode='menu';$('statsBtn').classList.add('hidden');$('hud
 $('bEdit').onclick=()=>{const cu=customs.includes(cur),i=customs.indexOf(cur);cur.par?openDesigner(cur,i,cu):openEditor(cur,i,cu)};
 $('bReset').onclick=()=>startFlight(cur,false);$('bAir').onclick=()=>startFlight(cur,true);
 $('zp').onclick=()=>Z=Math.min(40,Z*1.25);$('zm').onclick=()=>Z=Math.max(3,Z*.8);
-const GS={p:0,c:0,r:0,t:0,f:0,s:0,d:1,bay:-.5,n:0,a:0,ctop:0,pyl:0,wf:0,wb:0};let GD=0;
+const GS={p:0,c:0,r:0,t:0,f:0,s:0,d:1,bay:-.5,n:0,a:0,ctop:0,pyl:0,wf:0,wb:0,eoff:0};let GD=0;
 function btm(q){const s=sim.s,dx=q.x-s.cx,dy=q.y-s.cy,sn=Math.sin(sim.th),cs=Math.cos(sim.th);return sim.y+dx*sn+dy*cs-(q.t=='gear'?1:q.t=='wheel'?.8:.5)-gh(sim.x+dx*cs-dy*sn)}
 function lose(a,k){if(!a.length)return;const s=sim.s,sn=Math.sin(sim.th),cs=Math.cos(sim.th);
  for(const q of a){const i=sim.live.indexOf(q);if(i<0)continue;sim.live.splice(i,1);const dx=q.x-s.cx,dy=q.y-s.cy,rx=dx*cs-dy*sn,ry=dx*sn+dy*cs;puff(sim.x+rx,sim.y+ry,k);if(isWing(q.t))sayOnce('wing','Wing damage',4);sim.deb.push({t:q.t,v:q.v,txt:q.txt,x:sim.x+rx,y:sim.y+ry,vx:sim.vx*.7-sim.om*ry+(Math.random()-.5)*k,vy:sim.vy*.3+Math.random()*k*.6,a:sim.th,w:(Math.random()-.5)*k,fire:isEng(q.t)})}
