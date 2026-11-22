@@ -138,7 +138,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="ejc" class="hidden"><div class="card"><h2>Eject now?</h2><p>The pilot leaves the plane by parachute. The plane keeps flying without a pilot, and the passengers stay on board.</p><div class="rb2"><button class="btn big" id="ejY" style="background:#ff5252;border-color:#ff8a80;color:#fff">Eject!</button><button class="btn" id="ejN">Stay</button></div></div></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.28 · 2026-11-22 19:43 UTC</span>
+<span id="ver">v1.0.29 · 2026-11-22 20:22 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
@@ -494,7 +494,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
   if(!cw)sim.om*=.5;
   if(Math.abs(sim.vx)<.05&&sim.thr==0)sim.vx=0}
  track(dt,ng);
- if(sim.crash<=0)$('msg').textContent=sim.ej&&!sim.ej.done?(sim.ej.chute?'PARACHUTE OPEN':'EJECTING...'):sim.pick?'TAP '+(sim.pick=='gear'?'A LANDING GEAR':'AN ENGINE')+' (TAP SKY TO CANCEL)':sim.nt>0?sim.ntx:(sim.ev&&sim.ev.dang&&sim.ev.pax-sim.ev.saved-sim.ev.lost-sim.ev.dead>0)?'EVACUATE!':sim.af&&!sim.boats.length&&sim.afT<60?'ON THE WATER. OPEN DOORS, LAUNCH BOATS':sim.bt>0?'BIRD STRIKE!':sim.tsT>0?'TAIL STRIKE!':wl>.05&&!em.fire?'WING DAMAGE':em.fire?'ENGINE FIRE!':sim.ter?'TERRAIN - PULL UP':sim.stall?'STALL':sim.fuel<=0?'OUT OF FUEL':em.leak?'FUEL LEAK':''}
+ if(sim.crash<=0)$('msg').textContent=sim.ej&&!sim.ej.done?(sim.ej.chute?'PARACHUTE OPEN':'EJECTING...'):sim.pick?'TAP '+(sim.pick=='gear'?'A LANDING GEAR':'AN ENGINE')+' (TAP SKY TO CANCEL)':sim.nt>0?sim.ntx:sim.af&&!sim.boats.length&&sim.afT<60?'ON THE WATER. OPEN DOORS, LAUNCH BOATS':sim.bt>0?'BIRD STRIKE!':sim.tsT>0?'TAIL STRIKE!':wl>.05&&!em.fire?'WING DAMAGE':em.fire?'ENGINE FIRE!':sim.ter?'TERRAIN - PULL UP':sim.stall?'STALL':sim.fuel<=0?'OUT OF FUEL':em.leak?'FUEL LEAK':''}
 function track(dt,ng){const st=sim.st,agl=sim.y-sim.hg-gh(sim.x),sp=Math.hypot(sim.vx,sim.vy);st.t+=dt;st.dist+=Math.abs(sim.vx)*dt;st.maxAlt=Math.max(st.maxAlt,sim.y-sim.hg);st.maxSpd=Math.max(st.maxSpd,sp);st.maxG=Math.max(st.maxG,Math.min(12,ng));
  if(agl>6)st.up=1;if(st.td&&agl>1.5)st.bounced=1;
  if(st.up&&agl<1.5&&sp<.6){st.stop+=dt;if(st.stop>1.6&&!st.shown)offerResults('land')}else st.stop=0}
@@ -740,7 +740,7 @@ function evacStep(dt){const ev=sim.ev;if(!ev||sim.crash>0)return;const still=Mat
  const out=ev.saved+ev.lost+ev.dead,rem=ev.pax-out;if(rem<=0)for(const q of sim.live)if(q.t=='door')q.ev=0;
  if(rate>0&&rem>0){ev.started=1;ev.acc+=rate*dt;let n=Math.min(Math.floor(ev.acc),rem);if(n>0){ev.acc-=n;if(sim.af&&!sim.boats.length){ev.accL+=n*.4;const l=Math.floor(ev.accL);ev.accL-=l;ev.lost+=l;ev.saved+=n-l}else ev.saved+=n}}
  const danger=sim.live.some(q=>q.fire)||(sim.af&&(sim.sk||0)>0)||(sim.af&&sim.afT>60);
- if(danger&&!ev.dang){ev.dang=1;ev.dt=0;if(rem>0)note('DANGER! GET EVERYONE OUT')}
+ if(danger&&!ev.dang){ev.dang=1;ev.dt=0;}
   if(ev.started&&ev.pax-ev.saved-ev.lost-ev.dead<=0&&!ev.done){ev.done=1;note('EVERYONE IS OUT!')}}
 function ejStep(dt){const e=sim.ej;if(!e||e.done)return;e.t+=dt;if(e.t<.45){e.vy+=(48-G)*dt;P_('fire',e.x,e.y-.6,(rnd()-.5)*2,-2-rnd()*3,.3,.5,.1,0,1)}else e.vy-=G*dt;
  if(!e.chute&&e.t>1.5&&e.y-gh(e.x)>14){e.chute=1;note('PARACHUTE OPEN')}
