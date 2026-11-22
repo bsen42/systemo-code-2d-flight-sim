@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S8KXSFTKGK"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('set',{app_name:'so_2d_flight_sim'});gtag('config','G-S8KXSFTKGK',{app_name:'so_2d_flight_sim'});</script>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sky Sandbox 2D</title>
 <style>
 :root{--bg:#0e1a2b;--fg:#fff;--card:#1b2c45;--acc:#ffb703;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -117,7 +117,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 #mPanel .row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}#mPanel h3{margin:6px 0 0;font-size:12px;opacity:.75;text-transform:uppercase;letter-spacing:.5px}
 #mPanel input[type=range]{flex:1;min-width:110px}#mPanel input[type=text]{background:#12203a;color:#fff;border:1px solid #3b5378;border-radius:8px;padding:6px 8px}
 @media (orientation:landscape){#mBody{flex-direction:row}#mPanel{width:310px;max-height:none;flex:none}}
-#kbd{margin:6px 0 10px;font-size:13px}#kbd summary{cursor:pointer;opacity:.8}#kbd .kl{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:3px 10px;margin-top:6px}#kbd .kl div{display:flex;gap:6px;align-items:baseline}#kbd .kl b{min-width:0;white-space:nowrap;color:#ffb703}#kbd .kl b::after{content:' –';color:#888;font-weight:400}#kbd .kl span{opacity:.85}#kb{position:absolute;right:76px;bottom:152px;display:flex;flex-wrap:wrap;gap:2px 12px;max-width:min(420px,50vw);justify-content:flex-end;font-size:11px;background:rgba(0,0,0,.45);padding:6px 10px;border-radius:10px;pointer-events:none;opacity:.8}#kb b{color:#ffb703}@media (pointer:coarse){#kb{display:none!important}}*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-user-drag:none}input,textarea{-webkit-user-select:text;user-select:text}button,.btn,.ib,.rb,.fb,canvas{touch-action:manipulation}</style></head><body>
+#kbd{margin:6px 0 10px;font-size:13px}#kbd summary{cursor:pointer;opacity:.8}#kbd .kl{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:3px 10px;margin-top:6px}#kbd .kl div{display:flex;gap:6px;align-items:baseline}#kbd .kl b{min-width:0;white-space:nowrap;color:#ffb703}#kbd .kl b::after{content:' –';color:#888;font-weight:400}#kbd .kl span{opacity:.85}#kb{position:absolute;right:76px;bottom:152px;display:flex;flex-wrap:wrap;gap:2px 12px;max-width:min(420px,50vw);justify-content:flex-end;font-size:11px;background:rgba(0,0,0,.45);padding:6px 10px;border-radius:10px;pointer-events:none;opacity:.8}#kb b{color:#ffb703}@media (pointer:coarse){#kb{display:none!important}}</style></head><body>
 <canvas id="c"></canvas>
 <div id="menu" class="scr"><h1>✈️ Sky Sandbox 2D</h1><p>Free flight. No coins, no missions.</p><details id="kbd"><summary>⌨ Keyboard shortcuts</summary><div class="kl"><div><b>W / S</b><span>throttle up / down</span></div><div><b>A / D  ← / →</b><span>pitch</span></div><div><b>Z / X</b><span>full throttle / idle</span></div><div><b>F / V</b><span>flaps more / less</span></div><div><b>T</b><span>spoilers</span></div><div><b>B / Space</b><span>brakes</span></div><div><b>G</b><span>landing gear</span></div><div><b>O</b><span>doors</span></div><div><b>E</b><span>engine on / off</span></div><div><b>C</b><span>mouse mode</span></div><div><b>R</b><span>restart on runway</span></div><div><b>Y</b><span>start in the air</span></div><div><b>M</b><span>mute</span></div><div><b>H</b><span>show / hide keys in flight</span></div></div></details>
 <div id="rws" style="margin-bottom:10px"></div><div class="grid" id="cards"></div><button id="newBtn" class="btn big">+ Build new plane</button><button id="mapBtn" class="btn big">Map editor</button></div>
@@ -137,14 +137,9 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="res" class="hidden"></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.20 · 2026-11-22 05:52 UTC</span>
+<span id="ver">v1.0.19 · 2026-11-21 22:32 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
-['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
-document.addEventListener('contextmenu',e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName))e.preventDefault()});
-document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
-document.addEventListener('dblclick',e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName))e.preventDefault()});
-document.addEventListener('selectstart',e=>{if(!/INPUT|TEXTAREA/.test(e.target.tagName||''))e.preventDefault()});
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
 const ENGT={engine:[105,1],prop:[105,1],jet:[98,1],fan:[128,.9],tprop:[118,.85],ajet:[150,2.1],radial:[82,.8]},PROPT=['prop','tprop','radial','engine'],isEng=t=>t in ENGT;
 const LAY={body:0,cockpit:0,tank:0,wing:1,wingjet:1,winglong:1,wingshort:1,engine:2,prop:2,jet:2,fan:2,tprop:2,ajet:2,radial:2,tail:3,gear:4,wheel:4,door:5,label:6};
