@@ -56,3 +56,9 @@
    - **Ses duvarı 615 knot (316 m/s)**: yaklaşırken sürükleme artar + buhar halkaları, geçince "SOUND BARRIER BROKEN! BOOM!", şok halkaları ve sarsıntı. NOT: şu anki uçaklar bu hıza normalde ulaşamıyor (dalışta ~130–250 m/s); efekt zorla verilen hızla test edildi.
    - **Kanat hasarı**: "WING DAMAGE" yazısı artık sürekli değil, sadece kanat parçası koptuğu anda kısa görünür.
    Gerçek telefonda test edilmedi.
+41. **v1.0.31 – afterburner, harita kaydı, iPhone, tekneler, yerdeki yolcular**:
+   - **Afterburner güçlendi**: tam gazda (%80+) afterburner itki ×7 olur, afterburner'lı uçak daha az sürükleme yapar. Yeni hazır uçak **Strike Fighter**. 10 km yükseklikte dalışta 615 knot (ses duvarı) geçilebiliyor; alçakta ~300 m/s'de duvara takılır (gerçekçi: ince havada daha kolay).
+   - **Harita kaydı**: Map Editor panelinde "My maps": isim yaz → Save as; Load / Delete. Liste `ss2d_maps` anahtarında. Normal "Save" aktif haritayı yine `ss2d_map2`'ye kaydeder.
+   - **iPhone**: pitch ▲/▼ ve diğer HUD düğmeleri artık seçilmiyor / kopyala menüsü açmıyor (`-webkit-user-select`, `-webkit-touch-callout`); tuvalde çift dokunuş yakınlaştırması engellendi (sadece tuval/HUD; viewport değişmedi). Gerçek iPhone'da test edilmedi.
+   - **Tekneler**: tekneler kurtarılan yolcu sayısına göre dolar (kişi sayısı kadar küçük insan çizilir, tekne biraz batar).
+   - **Yerdeki yolcular**: karada tahliyede kayaktan inen her yolcu yere iner, yürür ve durur (en fazla 140 kişi çizilir).
