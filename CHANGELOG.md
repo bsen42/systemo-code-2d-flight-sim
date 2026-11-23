@@ -76,3 +76,4 @@
    - **Silindi**: bırakınca otomatik açı tutma/trim, otomatik stall koruması ("burnu indir"), stall'da otomatik burun düşürme, aerodinamik kendiliğinden düzelme (manuel uçuşta). Stall artık pilotun sorunu. Otomatik iniş, pilotsuz (eject) uçak ve hasar etkisi eski fizikle/etkiyle devam eder.
    - **Burun tekeri**: burun aşağı (> ~3.5°) ve hızlı inişte öndeki tekerlek/iniş takımı tüm yükü alır ve kırılır ("NOSE GEAR BROKE!").
    - Testler güncellendi (pitch hızı/yüksek hız, burun tekeri, normal iniş sağlam).
+45. **v1.0.35 – kokpitten fırlatma + harita editörü tam harita**: pilot artık uçağın ortasından değil kokpitin (yoksa en öndeki parçanın) bulunduğu yerden, uçağın eğimine göre fırlar. Harita editörü yakınlaştırma ölçeği 6 km'ye göre sabitti; 12 km'lik haritanın tamamı artık başlangıçta görünüyor (zoom 1 = tüm harita). Gerçek telefonda test edilmedi.

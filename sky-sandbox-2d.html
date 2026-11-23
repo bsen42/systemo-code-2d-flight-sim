@@ -140,7 +140,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="ejc" class="hidden"><div class="card"><h2>Eject now?</h2><p>The pilot leaves the plane by parachute. The plane keeps flying without a pilot, and the passengers stay on board.</p><div class="rb2"><button class="btn big" id="ejY" style="background:#ff5252;border-color:#ff8a80;color:#fff">Eject!</button><button class="btn" id="ejN">Stay</button></div></div></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.34 · 2026-11-23 16:33 UTC</span>
+<span id="ver">v1.0.35 · 2026-11-23 19:40 UTC</span>
 <script>
 (()=>{let lt=0;const g=e=>{if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||''))e.preventDefault()};document.addEventListener('dblclick',g);document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#hud,canvas'))e.preventDefault()});document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&e.target.tagName=='CANVAS')e.preventDefault();lt=n},{passive:false})})();
 const $=id=>document.getElementById(id);
@@ -293,7 +293,7 @@ let mtool='up',mdrag=0,mflat=0,msel=-1,msnap='',mu=[],mr=[],mv={x0:0,z:1},mpos=n
 const MT=[['up','▲ Raise'],['dn','▼ Lower'],['sm','≈ Smooth'],['fl','▬ Flatten'],['rough','∿ Rough'],['hill','⛰ Hill'],['val','◡ Valley'],['pan','✋ Pan'],['rsel','✈ Move runway'],['rw','＋ Add runway'],['del','✕ Delete runway']];
 function mPush(){mu.push(JSON.stringify(MAP));if(mu.length>40)mu.shift();mr=[]}
 function mResize(){const r=mc.getBoundingClientRect();mdpr=devicePixelRatio||1;mc.width=Math.max(200,Math.round(r.width*mdpr));mc.height=Math.max(150,Math.round(r.height*mdpr));mClamp();drawMap()}
-const mW=()=>mc.width/mdpr,mHt=()=>mc.height/mdpr,mPm=()=>mW()/6000*mv.z,mYm=()=>(mHt()-8)/1000,mBy=()=>mHt()-4-100*mYm();
+const mW=()=>mc.width/mdpr,mHt=()=>mc.height/mdpr,mPm=()=>mW()/MAPLEN*mv.z,mYm=()=>(mHt()-8)/1000,mBy=()=>mHt()-4-100*mYm();
 function mClamp(){const vw=mW()/mPm();mv.x0=Math.max(0,Math.min(MAPLEN-vw,mv.x0));try{$('mScroll').value=MAPLEN-vw>0?Math.round(mv.x0/(MAPLEN-vw)*1000):0}catch(e){}}
 const mX=px=>mv.x0+px/mPm(),mH=py=>(mBy()-py)/mYm();
 function mProt(j){return MAP.rw.some(q=>j*25>=q.x-60&&j*25<=q.x+q.len+60)}
@@ -780,7 +780,7 @@ function ejStep(dt){const e=sim.ej;if(!e||e.done)return;e.t+=dt;if(e.t<.45){e.vy
  if(!e.chute&&e.t>1.5&&e.y-gh(e.x)>14){e.chute=1;note('PARACHUTE OPEN')}
  if(e.chute){e.vy+=(-5.5-e.vy)*Math.min(1,dt*2.2);e.vx+=(Math.sin(sim.t*.8)*2-e.vx)*Math.min(1,dt*.4)}else e.vx*=Math.max(0,1-dt*.3);
  e.x+=e.vx*dt;e.y+=e.vy*dt;const g=gh(e.x);if(e.y<=g){e.y=g;e.done=1;e.wat=isWater(e.x);e.fatal=!e.chute||e.vy<-11;e.lv=-e.vy;if(e.wat)splashFx(3,3);offerResults('eject')}}
-function doEject(){if(!sim||sim.crash>0||sim.ej)return;$('ejc').classList.add('hidden');const agl=sim.y-sim.hg-gh(sim.x);sim.ej={x:sim.x,y:sim.y+.8,vx:sim.vx*.9,vy:sim.vy+4,t:0,chute:0,done:0,agl0:Math.max(0,agl),fatal:0};sim.noPilot=1;sim.al=0;MP=0;try{$('bMp').classList.remove('on')}catch(e){}note('EJECTED!');noise(.4,.4)}
+function doEject(){if(!sim||sim.crash>0||sim.ej)return;$('ejc').classList.add('hidden');const agl=sim.y-sim.hg-gh(sim.x);const ck=sim.live.find(q=>q.t=='cockpit')||sim.live.reduce((m,q)=>!m||q.x>m.x?q:m,null),dx=ck?ck.x-sim.s.cx:0,dy=ck?ck.y-sim.s.cy:0,ex=sim.x+dx*Math.cos(sim.th)-dy*Math.sin(sim.th),ey=sim.y+dx*Math.sin(sim.th)+dy*Math.cos(sim.th);sim.ej={x:ex,y:ey+.8,vx:sim.vx*.9,vy:sim.vy+4,t:0,chute:0,done:0,agl0:Math.max(0,agl),fatal:0};sim.noPilot=1;sim.al=0;MP=0;try{$('bMp').classList.remove('on')}catch(e){}note('EJECTED!');noise(.4,.4)}
 function ejAsk(){if(!sim||sim.crash>0||sim.ej)return;sim.ejq=1;$('ejc').classList.remove('hidden')}
 let tap0=null;cv.addEventListener('pointerdown',e=>{tap0={x:e.clientX,y:e.clientY,t:Date.now()}});
 cv.addEventListener('pointerup',e=>{const d=tap0;tap0=null;if(!d||mode!='fly'||!sim||sim.crash>0)return;if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>12||Date.now()-d.t>450)return;
