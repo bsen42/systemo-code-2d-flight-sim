@@ -62,3 +62,10 @@
    - **iPhone**: pitch ▲/▼ ve diğer HUD düğmeleri artık seçilmiyor / kopyala menüsü açmıyor (`-webkit-user-select`, `-webkit-touch-callout`); tuvalde çift dokunuş yakınlaştırması engellendi (sadece tuval/HUD; viewport değişmedi). Gerçek iPhone'da test edilmedi.
    - **Tekneler**: tekneler kurtarılan yolcu sayısına göre dolar (kişi sayısı kadar küçük insan çizilir, tekne biraz batar).
    - **Yerdeki yolcular**: karada tahliyede kayaktan inen her yolcu yere iner, yürür ve durur (en fazla 140 kişi çizilir).
+42. **v1.0.32 – kamera, ses duvarı görseli, savaş kanadı, editör boyutu, hazır uçak yenilemesi**:
+   - **Kamera**: hızlı çıkışta/dalışta uçak ekrandan çıkmıyor (kamera gecikmesi uçağa en çok ~%20 ekran uzaklıkta sınırlandı).
+   - **Ses duvarı görseli**: 615 knota yaklaşırken uçağın etrafında beyaz yoğuşma bulutu + halkalar belirir, geçince şok konisi gösterilir ve her şey sönüp kaybolur.
+   - **Savaş uçağı kanadı**: kanat kopma limiti (G) wingjet oranına göre 5.5 → 12.5'e kadar çıkar.
+   - **Editör hatası**: boyutlu kategoriye (Wings/Engines/Fuel/Tail) geçince "M" seçili görünüp "S" koyuyordu; artık geçişte seçili boyut ile gerçek boyut eşleşiyor.
+   - **Hazır uçaklar yenilendi**: kanatlar gövdeyle aynı satırda ve gövde kesilmeden (gizli, kütlesiz gövde hücresi `nm`) alta oturuyor; motorlar kanat altında direkle asılı. Airliner (2 turbofan, alçak kanat), 747 (4 turbofan), Beluga artık yolcusuz kargo (düz gövde, yüksek kanat, burun kargo kapısı + alt kokpit), Cargo Hauler (yüksek kanat, 4 turboprop, arka rampa). Pylon kısaldı (kanadın üstünden taşmıyor).
+   Gerçek telefonda test edilmedi.

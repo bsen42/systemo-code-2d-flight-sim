@@ -140,7 +140,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="ejc" class="hidden"><div class="card"><h2>Eject now?</h2><p>The pilot leaves the plane by parachute. The plane keeps flying without a pilot, and the passengers stay on board.</p><div class="rb2"><button class="btn big" id="ejY" style="background:#ff5252;border-color:#ff8a80;color:#fff">Eject!</button><button class="btn" id="ejN">Stay</button></div></div></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.31 · 2026-11-23 12:47 UTC</span>
+<span id="ver">v1.0.32 · 2026-11-23 13:15 UTC</span>
 <script>
 (()=>{let lt=0;const g=e=>{if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||''))e.preventDefault()};document.addEventListener('dblclick',g);document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#hud,canvas'))e.preventDefault()});document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&e.target.tagName=='CANVAS')e.preventDefault();lt=n},{passive:false})})();
 const $=id=>document.getElementById(id);
@@ -164,15 +164,15 @@ customs.forEach(p=>p.parts=fixGearY((p.parts||[]).filter(q=>T[q.t]).map(q=>q.t==
 const saveC=()=>{try{localStorage.setItem('ss2d_planes',JSON.stringify(customs))}catch(e){}};
 const G=9.8;
 function stats(ps){let M=0,sx=0,sy=0,S=0,E=0,AJ=0,TL=0,W=0,TK=0,TH=0,THP=0,B=0,TY=0,AB=0,LW=0,FW=0,SW=0;
- for(const q of ps){if(!T[q.t])continue;const vv=q.v==null?1:q.v,m=T[q.t].m*(q.t=='body'?1:q.t=='gear'||q.t=='door'||q.t=='cockpit'?1+Math.min(vv,3)*.2:.7+vv*.3);if(q.t=='body'&&vv>1)AB++;M+=m;sx+=m*q.x;sy+=m*q.y;if(isWing(q.t)){const z=[.7,1,1.4][vv];S+=z*(q.t=='winglong'?1.5:q.t=='wingshort'?.6:q.t=='wingjet'?.85:1);if(q.t=='winglong')LW+=z;if(q.t=='wingjet')FW+=z;if(q.t=='wingshort')SW+=z}if(isEng(q.t)){E++;const th=ENGT[q.t][0]*[.7,1,1.5][vv];TH+=th;if(q.t=='ajet')AJ+=th;if(PROPT.includes(q.t))THP+=th;B+=ENGT[q.t][1]*[.7,1,1.5][vv];TY+=th*q.y}if(q.t=='tail')TL++;if(q.t=='wheel'||q.t=='gear')W++;if(q.t=='tank')TK+=[.6,1,1.8][vv]}
- M=M||1;const r={M,cx:sx/M,cy:sy/M,S,E,TL,W,N:Math.max(1,ps.length-AB*.5-Math.min(ps.length*.3,SW*.3)),thrust:TH,THP,AJ:TH?AJ/TH:0,B:B||E,ty:TH?TY/TH-sy/M:0,fuel:40+TK*45,a:2*Math.PI,sa:.3+Math.min(.12,FW*.03),ki:.012*(1-Math.min(.35,LW*.05)),sm:1};if(ps.par)parO(r,ps.par);return r}
+ let NM=0;for(const q of ps){if(!T[q.t])continue;if(q.nm){NM++;continue}const vv=q.v==null?1:q.v,m=T[q.t].m*(q.t=='body'?1:q.t=='gear'||q.t=='door'||q.t=='cockpit'?1+Math.min(vv,3)*.2:.7+vv*.3);if(q.t=='body'&&vv>1)AB++;M+=m;sx+=m*q.x;sy+=m*q.y;if(isWing(q.t)){const z=[.7,1,1.4][vv];S+=z*(q.t=='winglong'?1.5:q.t=='wingshort'?.6:q.t=='wingjet'?.85:1);if(q.t=='winglong')LW+=z;if(q.t=='wingjet')FW+=z;if(q.t=='wingshort')SW+=z}if(isEng(q.t)){E++;const th=ENGT[q.t][0]*[.7,1,1.5][vv];TH+=th;if(q.t=='ajet')AJ+=th;if(PROPT.includes(q.t))THP+=th;B+=ENGT[q.t][1]*[.7,1,1.5][vv];TY+=th*q.y}if(q.t=='tail')TL++;if(q.t=='wheel'||q.t=='gear')W++;if(q.t=='tank')TK+=[.6,1,1.8][vv]}
+ M=M||1;const r={M,cx:sx/M,cy:sy/M,S,E,TL,W,N:Math.max(1,ps.length-NM-AB*.5-Math.min(ps.length*.3,SW*.3)),thrust:TH,THP,AJ:TH?AJ/TH:0,B:B||E,ty:TH?TY/TH-sy/M:0,fuel:40+TK*45,a:2*Math.PI,sa:.3+Math.min(.12,FW*.03),ki:.012*(1-Math.min(.35,LW*.05)),sm:1};if(ps.par)parO(r,ps.par);return r}
 /* ---------- drawing ---------- */
 function shade(h,f){const n=parseInt(String(h).slice(1),16)||0,r=n>>16&255,g=n>>8&255,b=n&255,k=f<0?0:255,a=Math.abs(f);return 'rgb('+Math.round(r+(k-r)*a)+','+Math.round(g+(k-g)*a)+','+Math.round(b+(k-b)*a)+')'}
 const SO={wing:-.05,wingjet:-.05,winglong:-.05,wingshort:-.05,tail:.5,engine:0,prop:0,jet:0,tank:0,fan:0,tprop:0,ajet:0,radial:0};
 function dp(c,t,fl,pr,hf,hb,q){if(!(t in SO))return dp0(c,t,fl,pr,hf,hb,q);const f=[.72,1,1.3][q&&q.v!=null?q.v:1];if(f==1)return dp0(c,t,fl,pr,hf,hb,q);const o=SO[t];c.save();c.translate(0,o);c.scale(f,f);c.translate(0,-o);dp0(c,t,fl,pr,hf,hb,q);c.restore()}
 function slideDraw(c){const h=GS.sh,k=Math.min(1,GS.sl),L=h*k,T=performance.now()/1000;c.save();c.translate(0,.5);c.lineJoin='round';c.fillStyle='#ffca28';c.strokeStyle='#e65100';c.lineWidth=.05;c.beginPath();c.moveTo(.3,0);c.lineTo(-.3,0);c.lineTo(-.3-L*.8,L);c.lineTo(.3-L*.8,L);c.closePath();c.fill();c.stroke();c.strokeStyle='rgba(230,81,0,.6)';c.lineWidth=.04;for(let i=1;i<5;i++){const u=i/5;c.beginPath();c.moveTo(.3-L*.8*u,L*u);c.lineTo(-.3-L*.8*u,L*u);c.stroke()}
  c.fillStyle='#e65100';c.beginPath();c.ellipse(-L*.8-.0,L,.38,.12,0,0,7);c.fill();if(GS.ds&&k>.9)for(let j=0;j<GS.ds.length;j++){const u=GS.ds[j];c.fillStyle=['#e53935','#1e88e5','#43a047','#8e24aa'][j%4];c.beginPath();c.arc(-L*.8*u,L*u-.12,.1,0,7);c.fill();c.fillStyle='#ffcc80';c.beginPath();c.arc(-L*.8*u,L*u-.27,.07,0,7);c.fill()}c.restore()}
-function pylon(c){const o=GS.eoff||0;c.fillStyle=shade(LV[0],-.3);c.fillRect(-.12,-.64-o,.24,.42+o)}
+function pylon(c){const o=GS.eoff||0;c.fillStyle=shade(LV[0],-.3);if(o)c.fillRect(-.12,-.62,.24,.4);else c.fillRect(-.12,-.64,.24,.42)}
 function bodyPath(c,hf,hb){c.beginPath();c.moveTo(-.51,hb?-.5:-.2);if(hf){c.lineTo(.51,-.5);c.lineTo(.51,.5)}else{c.lineTo(0,-.5);c.bezierCurveTo(.4,-.5,.7,-.25,.7,.08);c.bezierCurveTo(.7,.32,.42,.5,.05,.5)}c.lineTo(-.51,hb?.5:.3);c.closePath()}
 function aeroPath(c,hf,hb){c.beginPath();c.moveTo(-.51,hb?-.44:-.1);if(hf){c.lineTo(.51,-.44);c.lineTo(.51,.44)}else{c.lineTo(-.1,-.44);c.bezierCurveTo(.35,-.44,.75,-.22,.9,.05);c.bezierCurveTo(.75,.22,.35,.44,-.05,.44)}c.lineTo(-.51,hb?.44:.12);c.closePath()}
 function glassG(c,y0,y1){const g=c.createLinearGradient(0,y0==null?-.5:y0,0,y1==null?.3:y1);g.addColorStop(0,'#d6f6ff');g.addColorStop(.35,'#6cc0e8');g.addColorStop(.75,'#2a7aa6');g.addColorStop(1,'#123d57');return g}
@@ -259,13 +259,14 @@ function thumb(cv,ps){const c=cv.getContext('2d');cv.width=300;cv.height=160;c.c
  for(const q of ps){a=Math.min(a,q.x);b=Math.max(b,q.x);d=Math.min(d,q.y);e=Math.max(e,q.y)}
  const z=Math.min(280/(b-a+2),140/(e-d+2),30);c.save();c.translate(150-((a+b)/2-s.cx)*z,80+((d+e)/2-s.cy)*z);drawPlane(c,ps,s.cx,s.cy,z);c.restore()}
 const V={b:['body',0],A:['ajet',1],w:['wingjet',1],G:['gear',4],H:['gear',1],J:['gear',2],K:['gear',2],X:['door',0],Y:['door',1],R:['door',2],U:['door',3],Z:['cockpit',3],I:['cockpit',0],M:['cockpit',2],F:['tank',2]};const A=rows=>{const m={B:'body',C:'cockpit',W:'wing',E:'jet',T:'tail',O:'gear',D:'door',P:'prop'},w=Math.max(...rows.map(r=>r.length)),o=[];rows.forEach((r,j)=>[...r].forEach((ch,i)=>{const v=V[ch];if(m[ch]||v)o.push({t:v?v[0]:m[ch],v:v?v[1]:1,x:i-(w>>1),y:(rows.length>>1)-j})}));return o};
+const AA=(rows,o={})=>{const q=A(rows),w=Math.max(...rows.map(r=>r.length)),j=rows.findIndex(r=>/[Ww]/.test(r));if(o.wb)for(const p of q.slice())if(p.t=='wing'||p.t=='wingjet')q.push({t:'body',v:o.wb=='b'?0:1,x:p.x,y:p.y,nm:1});for(const [c,t,v] of o.eng||[])q.push({t,v:v==null?1:v,x:c-(w>>1),y:(rows.length>>1)-j});return q};
 const presets=[
-{name:'Sparrow',parts:A(['.TT..............','.TT........MM....','BBBBBWWWWWWBBBBBP','...O......O......'])},
-{name:'Falcon Jet',parts:A(['TT..................','TTT..........CC.....','EEBBBBBWWWWWBBBBBBBB','....EE...O......O...'])},
-{name:'Skimmer Glider',parts:A(['.TT..................','.TTT.............MM..','BBBBBWWWWWWWWWWWWBBBB','........O............'])},
-{name:'Red Biplane',parts:A(['TT......WWWWW.....','TTT.....B...B.MM..','BBBBBBBBWWWWWBBBBP','...O......O.......'])},
-{name:'Airliner',parts:A(['TT......................','TTT.....................','BBBBBBBBBBBBBBBBBBBBDBIB','.........WWWWWWWWW......','.........E.E.O.E.E...O..'])},
-{name:'Cargo Hauler',parts:A(['TT....................','TTT...P.P.P.P.........','bbbbWWWWWWWWWWWbbbbbbI','bbbbbbbbbbDDDDbbbbbbbb','.....O..O.........O...'])}
+{name:'Sparrow',parts:AA(['.TT..............','.TT........MM....','BBBBBWWWWWWBBBBBP','...O......O......'],{wb:'B'})},
+{name:'Falcon Jet',parts:AA(['TT..................','TTT..........CC.....','EEBBBBBWWWWWBBBBBBBB','....EE...O......O...'],{wb:'B'})},
+{name:'Skimmer Glider',parts:AA(['.TT..................','.TTT.............MM..','BBBBBWWWWWWWWWWWWBBBB','........O............'],{wb:'B'})},
+{name:'Red Biplane',parts:AA(['TT......WWWWW.....','TTT.....B...B.MM..','BBBBBBBBWWWWWBBBBP','...O......O.......'],{wb:'B'})},
+{name:'Airliner',parts:AA(['TT........................','TTT.......................','BBBBBBBBBWWWWWWWWWWBBBBDBI','............G.G.........G'],{wb:'B',eng:[[11,'fan',2],[16,'fan',2]]})},
+{name:'Cargo Hauler',parts:AA(['TT....................','TTT...WWWWWWWWW.......','bbbbbbbbbbbbbbbbbbbbbI','Rbbbbbbbbbbbbbbbbbbbbb','........K.K........G'],{eng:[[7,'tprop'],[9,'tprop'],[11,'tprop'],[13,'tprop']]})}
 ];
 const DEF=['#e8eef5','#e53935'];let LV=DEF,RW=0;
 [['#f5f0e0','#1565c0'],['#90a4ae','#ff6f00'],['#ffffff','#00897b'],['#e53935','#fdd835'],['#f5f5f5','#1e88e5'],['#ffd54f','#37474f']].forEach((c,i)=>presets[i].c=c);
@@ -459,7 +460,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  const aa=Math.abs(aoa),sg=Math.sign(aoa);
  const sE=s.sa+sim.fa*.09,CL=aa<sE?s.a*aoa:sg*Math.max(.4,s.a*sE*(1-(aa-sE)*1.5));
  sim.stall=aa>sE&&v>8;
- {if(v>SB&&!sim.sb){sim.sb=1;sim.shake=Math.max(sim.shake||0,.7);note('SOUND BARRIER BROKEN! BOOM!');P_('flash',sim.x,sim.y,0,0,.5,4,26,0,0);P_('ring',sim.x,sim.y,0,0,1.4,2,60,0,0);P_('ring',sim.x,sim.y,0,0,1.8,1,90,0,0)}else if(v<SB-8&&sim.sb)sim.sb=0;if(v>SB*.93&&v<SB*1.06){sim.sbT=(sim.sbT||0)-dt;if(sim.sbT<=0){sim.sbT=.12;P_('ring',sim.x+3,sim.y,0,0,.5,1,5,0,0)}}}
+ {{const t=v<SB?Math.exp(-Math.pow((v-SB)/(.07*SB),2)):Math.exp(-Math.pow((v-SB)/(.025*SB),2));sim.sbI=(sim.sbI||0)+(t-(sim.sbI||0))*Math.min(1,dt*5);sim.sbC=Math.max(0,(sim.sbC||0)-dt*.4)}if(v>SB&&!sim.sb){sim.sb=1;sim.sbC=1;sim.shake=Math.max(sim.shake||0,.7);note('SOUND BARRIER BROKEN! BOOM!');P_('flash',sim.x,sim.y,0,0,.5,4,26,0,0);P_('ring',sim.x,sim.y,0,0,1.4,2,60,0,0);P_('ring',sim.x,sim.y,0,0,1.8,1,90,0,0)}else if(v<SB-8&&sim.sb)sim.sb=0;if(v>SB*.93&&v<SB*1.06){sim.sbT=(sim.sbT||0)-dt;if(sim.sbT<=0){sim.sbT=.12;P_('ring',sim.x+3,sim.y,0,0,.5,1,5,0,0)}}}
  {const hands=!window.NOTRIM&&!sim.al&&!K.up&&!K.down&&!MP&&sim.ga>.5&&v>8;if(hands){if(sim.hP==null)sim.hP=sim.th;{const vmin=1.15*Math.sqrt((s.M+sim.fuel*.05)*G/(.05*Math.max(.5,s.S)*(s.a*sE+.12+sim.fl*.3)));if(Math.abs(sim.hP)<1.1){if(v<vmin)sim.hP-=(vmin-v)*.05*dt;else if(v>vmin*1.2)sim.hP+=((sim.hP0==null?sim.th:sim.hP0)-sim.hP)*.4*dt}}sim.tr=Math.max(-.6,Math.min(.6,(sim.tr||0)+(sim.hP-sim.th)*2.5*dt));el=Math.max(-.7,Math.min(.7,(sim.hP-sim.th)*4-sim.om*.8+sim.tr));if(Math.abs(sim.hP)<1.1&&aoa>sE*.85&&aoa<2)el=Math.min(el,-.5)}else{sim.hP=sim.th;sim.hP0=sim.th;sim.tr=(sim.tr||0)*Math.max(0,1-dt*.5)}}if(sim.stall){sim.om-=sg*1.5*dt;sim.shake=Math.max(sim.shake,.15)}
  const lift=v2*rho*.05*s.S*(CL+.12+sim.fl*.3)*(em.wing?.55:1)*(1-.65*sim.sp)*(1+Math.max(0,1-(sim.y-sim.hg-gh(sim.x))/6)*.15)*(sim.gl>0&&sim.ep<.35&&el<.05&&sim.vy<=.5?.4:1)*(v<1?0:1),drag=v2*rho*(.003*(s.N+(1-sim.gp)*3+sim.dop*2)+s.S*(sim.fl*.012+sim.sp*.035)+s.ki*s.S*CL*CL+(sim.stall?.01*s.S:0))*(1+Math.pow(Math.max(0,(v-200)/60),2)*.8)*(1+1.1*Math.exp(-Math.pow((v-SB)/22,2)))*(1-SLK*(s.AJ||0)*Math.max(0,Math.min(1,(v-90)/120)));
  const pe=Math.max(.4,1-v/300);let thS=0;for(const q of eng0){const z=ENGT[q.t][0]*[.7,1,1.5][q.v==null?1:q.v];thS+=z*(q.dead?0:1)*(q.fire?.55:1)*(PROPT.includes(q.t)?pe:1)*(q.t=='ajet'?1+AFT*Math.max(0,Math.min(1,(sim.ep-.8)/.2)):1)}
@@ -467,7 +468,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  if(v>.5){Fx+=-drag*vx/v-lift*vy/v;Fy+=-drag*vy/v+lift*vx/v}
  const M=s.M+sim.fuel*.05;Fy-=M*G;sim.fuel=window.INF?s.fuel:Math.max(0,sim.fuel-(sim.ep*(s.B||s.E)*.35+(em.leak?2.5:0))*dt);sim.shake=Math.max(0,sim.shake-dt);
  const ng=lift/(M*G),lv=sim.live;
- if(ng>5.5&&Math.random()<dt*3){const w=lv.filter(q=>isWing(q.t));if(w.length)lose([w[w.length*Math.random()|0]],9)}
+ {const w=lv.filter(q=>isWing(q.t)),fj=w.length?w.filter(q=>q.t=='wingjet').length/w.length:0;if(ng>5.5+7*fj&&Math.random()<dt*3&&w.length)lose([w[w.length*Math.random()|0]],9)}
  {const ov=sim.gp<.5&&v>100&&sim.y-sim.hg-gh(sim.x)>5;sim.gov=ov?(sim.gov||0)+dt:Math.max(0,(sim.gov||0)-dt*2);if(sim.gov>1.5){sim.gov=0;lose(lv.filter(q=>q.t=='gear'&&q.gp<.5),6)}}
  {const od=lv.filter(q=>q.t=='door'&&(q.dp||0)>.3);if(od.length&&v>30&&sim.y-sim.hg-gh(sim.x)>2)lose(od,6)}
  if(sim.crash>0)return;
@@ -626,7 +627,12 @@ function drawDebris(){const X=x=>W/2+(x-camx)*Z,Y=y=>(H-130)*.58-(y-camy)*Z;
  drawPt(X,Y)}
 function drawSim(){LV=sim.p.c||DEF;GS.p=sim.gp;GS.c=Math.max(-.3,Math.min(1.4,(sim.sus||0)/.5));GD=sim.dop;GS.r=sim.wr||0;GS.f=sim.fa||0;GS.s=sim.sa||0;GS.a=sim.gb||0;GS.t=sim.gnd?Math.max(-.3,Math.min(.3,sim.th)):0;if(sim.deb.length||sim.pt.length||sim.birds.length||sim.boats.length||sim.run.length||sim.ej)drawDebris();if(sim.crash>0)return;const s=sim.s;ctx.save();ctx.translate(W/2+(sim.x-camx)*Z,(H-130)*.58-(sim.y-camy)*Z+(sim.sus||0)*Z);ctx.rotate(-sim.th);
  if(sim.crash>0){ctx.globalAlpha=.6}
- DR(ctx,sim.live,s.cx,s.cy,Z,sim.fuel>0&&sim.on?sim.ep:0,sim.t*40);GS.f=GS.s=GS.a=0;ctx.restore();drawPick();
+ DR(ctx,sim.live,s.cx,s.cy,Z,sim.fuel>0&&sim.on?sim.ep:0,sim.t*40);GS.f=GS.s=GS.a=0;
+ if((sim.sbI||0)>.03||(sim.sbC||0)>.03){const I=sim.sbI||0,C=sim.sbC||0,T=sim.t;ctx.save();ctx.globalCompositeOperation='source-over';
+  if(I>.03){const g=ctx.createRadialGradient(-Z*1.5,0,Z*.5,-Z*1.5,0,Z*8);g.addColorStop(0,`rgba(255,255,255,${.75*I})`);g.addColorStop(.55,`rgba(235,245,255,${.4*I})`);g.addColorStop(1,'rgba(235,245,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(-Z*1.5,0,Z*8,Z*3.2,0,0,7);ctx.fill();ctx.strokeStyle=`rgba(255,255,255,${.7*I})`;ctx.lineWidth=Math.max(1.5,Z*.12);for(let k=0;k<3;k++){const x=-Z*(1+k*2.2)-((T*3)%1)*Z*.6;ctx.beginPath();ctx.ellipse(x,0,Z*.7,Z*(1.4+k*.5),0,0,7);ctx.stroke()}}
+  if(C>.03){ctx.strokeStyle=`rgba(255,255,255,${.8*C})`;ctx.lineWidth=Math.max(1.5,Z*.1);ctx.beginPath();ctx.moveTo(Z*4,0);ctx.lineTo(-Z*(14+(1-C)*10),-Z*(5+(1-C)*4));ctx.moveTo(Z*4,0);ctx.lineTo(-Z*(14+(1-C)*10),Z*(5+(1-C)*4));ctx.stroke()}
+  ctx.restore()}
+ ctx.restore();drawPick();
  if(sim.crash>0){ctx.fillStyle='rgba(255,120,0,.8)';const X=W/2+(sim.x-camx)*Z,Y=(H-130)*.58-(sim.y-camy)*Z;ctx.beginPath();ctx.arc(X,Y,(1.8-sim.crash)*30*Z/6,0,7);ctx.fill()}}
 const VT=$('ver').textContent.replace(' UTC','').split(' · ');
 function hud(){const s=sim.s,v=Math.hypot(sim.vx,sim.vy);
@@ -634,7 +640,7 @@ function hud(){const s=sim.s,v=Math.hypot(sim.vx,sim.vy);
  $('ts').firstChild.style.height=sim.thr*100+'%';gauges()}
 let last=performance.now();
 function loop(n){const dt=Math.min(.033,(n-last)/1000);last=n;
- if(mode=='fly'&&sim){const sl=sim.birds.length?.5:1;for(let i=0;i<2;i++)step(dt*sl/2);{const cf=sim.ej&&!sim.ej.done?sim.ej:(sim.ej&&sim.ej.done?sim.ej:sim);camx+=(cf.x-camx)*Math.min(1,dt*8);camy+=(cf.y-camy)*Math.min(1,dt*4)}ctx.save();if(sim.shake>0)ctx.translate((Math.random()-.5)*sim.shake*14,(Math.random()-.5)*sim.shake*14);drawWorld();drawSim();drawWaterFront();ctx.restore();hud()}
+ if(mode=='fly'&&sim){const sl=sim.birds.length?.5:1;for(let i=0;i<2;i++)step(dt*sl/2);{const cf=sim.ej&&!sim.ej.done?sim.ej:(sim.ej&&sim.ej.done?sim.ej:sim);camx+=(cf.x-camx)*Math.min(1,dt*8);camy+=(cf.y-camy)*Math.min(1,dt*4);{const mx=Math.max(6,W*.2/Z),my=Math.max(6,(H-130)*.22/Z);camx=Math.max(cf.x-mx,Math.min(cf.x+mx,camx));camy=Math.max(cf.y-my,Math.min(cf.y+my,camy))}}ctx.save();if(sim.shake>0)ctx.translate((Math.random()-.5)*sim.shake*14,(Math.random()-.5)*sim.shake*14);drawWorld();drawSim();drawWaterFront();ctx.restore();hud()}
  else{camx+=dt*20;camy=40;drawWorld()}
  requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
@@ -723,13 +729,15 @@ function autoEl(dt){
 (()=>{const CAT={Body:[['body',0,'Plain'],['body',1,'Windows'],['body',2,'Aero'],['body',3,'Aero + windows'],['body',4,'Passenger nose →'],['body',5,'← Passenger tail']],Cockpit:[['cockpit',0,'Airliner'],['cockpit',1,'Fighter'],['cockpit',2,'Prop'],['cockpit',3,'Jumbo']],Wings:[['wing',1,'Wing'],['wingjet',1,'Fighter wing'],['winglong',1,'Long wing'],['wingshort',1,'Short wing']],Engines:[['prop',1,'Prop'],['radial',1,'Radial'],['tprop',1,'Turboprop'],['jet',1,'Jet'],['fan',1,'Turbofan'],['ajet',1,'Afterburner']],Fuel:[['tank',1,'Tank']],Gear:[['wheel',1,'Fixed'],['gear',4,'737'],['gear',1,'747'],['gear',2,'A380']],Doors:[['door',0,'Passenger'],['door',1,'Cargo'],['door',2,'Ramp'],['door',3,'Nose visor']],Tail:[['tail',1,'Tail fin']],Text:[['label',1,'Text']],Tools:[['select',1,'Select'],['erase',1,'Eraser']]},SZC=['Wings','Engines','Fuel','Tail'];
  const pal=document.createElement('div');pal.id='pal';$('eR').insertBefore(pal,$('eR').firstChild);
  const tabs=document.createElement('div'),tiles=document.createElement('div'),szs=document.createElement('div');tabs.className='r';tabs.style.flexWrap='wrap';tabs.style.gap='4px';tiles.className='pt';szs.className='r';szs.innerHTML='<small>Size</small>';
- [['S',0],['M',1],['L',2]].forEach(([n,v])=>{const b=document.createElement('button');b.className='btn'+(v==1?' on':'');b.textContent=n;b.onclick=()=>{tvar=v;[...szs.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x==b))};szs.appendChild(b)});
- const show=k=>{[...tabs.children].forEach(x=>x.classList.toggle('on',x.textContent==k));szs.style.display=SZC.includes(k)?'flex':'none';tiles.innerHTML='';CAT[k].forEach(([t,v,n])=>{const b=document.createElement('button');b.className='btn tl2';const cv=document.createElement('canvas');cv.width=cv.height=52;icon(cv,t,v);b.append(cv);b.insertAdjacentHTML('beforeend','<small>'+n+'</small>');b.onclick=()=>{tool=t;if(!SZC.includes(k))tvar=v;[...tiles.children].forEach(x=>x.classList.toggle('on',x==b))};tiles.appendChild(b)})};
+ [['S',0],['M',1],['L',2]].forEach(([n,v])=>{const b=document.createElement('button');b.className='btn'+(v==1?' on':'');b.textContent=n;b.onclick=()=>{tvar=szSel=v;[...szs.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x==b))};szs.appendChild(b)});let szSel=1;
+ const show=k=>{[...tabs.children].forEach(x=>x.classList.toggle('on',x.textContent==k));szs.style.display=SZC.includes(k)?'flex':'none';if(SZC.includes(k)){tvar=szSel;[...szs.querySelectorAll('button')].forEach((x,i)=>x.classList.toggle('on',i==szSel))}tiles.innerHTML='';CAT[k].forEach(([t,v,n])=>{const b=document.createElement('button');b.className='btn tl2';const cv=document.createElement('canvas');cv.width=cv.height=52;icon(cv,t,v);b.append(cv);b.insertAdjacentHTML('beforeend','<small>'+n+'</small>');b.onclick=()=>{tool=t;if(!SZC.includes(k))tvar=v;[...tiles.children].forEach(x=>x.classList.toggle('on',x==b))};tiles.appendChild(b)})};
  Object.keys(CAT).forEach(k=>{const b=document.createElement('button');b.className='btn';b.textContent=k;b.onclick=()=>show(k);tabs.appendChild(b)});pal.append(tabs,szs,tiles);show('Body');
  $('sys').insertAdjacentHTML('beforeend','<button class="ib" id="bAl"><b>AUTO-LAND</b></button>');$('bAl').onclick=()=>{if(sim){sim.al^=1;sim.alAir=0;sim.alV=0;sim.alR=null}};
  $('hud').insertAdjacentHTML('beforeend','<div id="rwb" title="tap to collapse"></div>');$('rwb').onclick=()=>$('rwb').classList.toggle('min');
 })();
-[['747 Jumbo',['TT..................ZZ..','TTT.................BB..','BBBBBBBBBBBBBBBBBXBBBBBB','.........WWWWWWWWWW.....','........E.E.H.E.E..H....'],['#ffffff','#1565c0']],['Beluga',['TT.....PP...PP.........','TTBBBBWWWWWWWWWWWWBBBB..','BBBBBBBBBBBBBBBBBBBBBYBB','BBBBBBBBBBBBBBBBBBBBBBZB','......K...K...K.....G...'],['#f5f5f5','#1e88e5']],['Strike Fighter',['TT..................','TTT..........CC.....','AABBBBBwwwwwBBBBBBBB','....AA...O......O...'],['#b0bec5','#37474f']]].forEach(([n,r,c])=>presets.push({name:n,parts:A(r),c}));
+[['747 Jumbo',['TT.........................','TTT.........................','BBBBBBBBBWWWWWWWWWBBBBBBXBBBI','............H.H......H'],['#ffffff','#1565c0'],{wb:'B',eng:[[10,'fan'],[12,'fan'],[15,'fan'],[17,'fan']]}],
+['Beluga',['TT........................','TTT.....WWWWWWWWWW.......','bbbbbbbbbbbbbbbbbbYbbbbbU','bbbbbbbbbbbbbbbbbbbbbbbbZ','........K..K..K.......G'],['#f5f5f5','#1e88e5'],{eng:[[10,'fan',2],[15,'fan',2]]}],
+['Strike Fighter',['TT..................','TTT..........CC.....','AAbbbbbwwwwwbbbbbbbb','....AA...O......O...'],['#b0bec5','#37474f'],{wb:'b'}]].forEach(([n,r,c,o])=>presets.push({name:n,parts:AA(r,o),c}));
 let anim=0,selP=null;
 (()=>{const e=$('editor'),top=document.createElement('div'),es=document.createElement('div'),sv=document.createElement('button');top.id='etop';es.id='es2';sv.className='btn';sv.id='eSave';sv.textContent='Save';$('eFly').textContent='Test fly';
  top.append($('eBack'),$('ename'),es,$('eFly'),sv);e.insertBefore(top,$('eMain'));
