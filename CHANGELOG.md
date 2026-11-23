@@ -49,3 +49,10 @@
 37. **v1.0.27 – pitch her açıda (360°) kalır**: otomatik tutma artık ±45° ile sınırlı değil; dik, ters, takla açıları dahil bırakılan açı tutulur. Hız/stall koruması sadece yataya yakın açılarda (±63°) çalışır. Smoke testi eklendi (−69°…180°). Gerçek telefonda test edilmedi.
 38. **v1.0.28 – iniş takımı sıkışma görseli**: gövde süspansiyonla aşağı inerken amortisör görseli sadece yarım sıkışmaya kadar kısalıyordu; artık tam sıkışmada da (sert inişler, >12 m/s) tekerlek yere gömülmez. Normal inişlerde (24 senaryo, 6 uçak) fiziksel gömülme 0, çıplak gözle görülen fark ≤0.1 m ölçüldü; kullanıcının gördüğü durum net yeniden üretilemedi. Gerçek telefonda test edilmedi.
 39. **v1.0.29 – "EVACUATE!" yazıları kaldırıldı**: aktif acil durumda ekrandaki "EVACUATE!" mesajı ve "DANGER! GET EVERYONE OUT" bildirimi silindi. 🚨 düğmesi/`K` tuşu aynen çalışır. Gerçek telefonda test edilmedi.
+40. **v1.0.30 – tepede pitch, uzun harita, slayt sayımı, ses duvarı, kanat mesajı**:
+   - **Tepeye inişte pitch**: yerdeyken burun artık düz (0°) değil arazi eğimini izler (eğimli pistte/tepede pitch sıfırlanmıyor).
+   - **Daha uzun harita**: 6 km → 12 km; 4 yeni pist (Ridge, Lake, Sea, Far Airport) ve ikinci bir göl. Eski kayıtlı haritalar silinmez, sağa doğru genişletilir. Otomatik iniş sadece en yakın 4 pisti dikkate alır.
+   - **Slayt**: her kayan nokta = 1 yolcu; nokta slaydın sonuna ulaşınca +1 kurtulan sayılır (sayı artık zamana göre değil noktaya göre).
+   - **Ses duvarı 615 knot (316 m/s)**: yaklaşırken sürükleme artar + buhar halkaları, geçince "SOUND BARRIER BROKEN! BOOM!", şok halkaları ve sarsıntı. NOT: şu anki uçaklar bu hıza normalde ulaşamıyor (dalışta ~130–250 m/s); efekt zorla verilen hızla test edildi.
+   - **Kanat hasarı**: "WING DAMAGE" yazısı artık sürekli değil, sadece kanat parçası koptuğu anda kısa görünür.
+   Gerçek telefonda test edilmedi.

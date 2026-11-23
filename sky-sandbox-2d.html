@@ -138,7 +138,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="ejc" class="hidden"><div class="card"><h2>Eject now?</h2><p>The pilot leaves the plane by parachute. The plane keeps flying without a pilot, and the passengers stay on board.</p><div class="rb2"><button class="btn big" id="ejY" style="background:#ff5252;border-color:#ff8a80;color:#fff">Eject!</button><button class="btn" id="ejN">Stay</button></div></div></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.29 · 2026-11-22 20:22 UTC</span>
+<span id="ver">v1.0.30 · 2026-11-23 12:32 UTC</span>
 <script>
 const $=id=>document.getElementById(id);
 const T={body:{m:.6,n:'Fuselage'},cockpit:{m:.5,n:'Cockpit'},wing:{m:.6,n:'Wing'},engine:{m:1.5,n:'Engine'},tail:{m:.4,n:'Tail fin'},wheel:{m:.3,n:'Wheel'},tank:{m:.4,n:'Fuel tank'},gear:{m:.6,n:'Twin-wheel retractable gear'},door:{m:.3,n:'Door'},prop:{m:1.5,n:'Propeller engine'},jet:{m:1.8,n:'Jet engine'},label:{m:0,n:'Text'},wingjet:{m:.5,n:'Fighter wing'},winglong:{m:.8,n:'Long wing'},wingshort:{m:.45,n:'Short wing'},fan:{m:2.2,n:'Turbofan'},tprop:{m:1.8,n:'Turboprop'},ajet:{m:1.9,n:'Afterburner jet'},radial:{m:1.2,n:'Radial piston'}};
@@ -168,7 +168,7 @@ function shade(h,f){const n=parseInt(String(h).slice(1),16)||0,r=n>>16&255,g=n>>
 const SO={wing:-.05,wingjet:-.05,winglong:-.05,wingshort:-.05,tail:.5,engine:0,prop:0,jet:0,tank:0,fan:0,tprop:0,ajet:0,radial:0};
 function dp(c,t,fl,pr,hf,hb,q){if(!(t in SO))return dp0(c,t,fl,pr,hf,hb,q);const f=[.72,1,1.3][q&&q.v!=null?q.v:1];if(f==1)return dp0(c,t,fl,pr,hf,hb,q);const o=SO[t];c.save();c.translate(0,o);c.scale(f,f);c.translate(0,-o);dp0(c,t,fl,pr,hf,hb,q);c.restore()}
 function slideDraw(c){const h=GS.sh,k=Math.min(1,GS.sl),L=h*k,T=performance.now()/1000;c.save();c.translate(0,.5);c.lineJoin='round';c.fillStyle='#ffca28';c.strokeStyle='#e65100';c.lineWidth=.05;c.beginPath();c.moveTo(.3,0);c.lineTo(-.3,0);c.lineTo(-.3-L*.8,L);c.lineTo(.3-L*.8,L);c.closePath();c.fill();c.stroke();c.strokeStyle='rgba(230,81,0,.6)';c.lineWidth=.04;for(let i=1;i<5;i++){const u=i/5;c.beginPath();c.moveTo(.3-L*.8*u,L*u);c.lineTo(-.3-L*.8*u,L*u);c.stroke()}
- c.fillStyle='#e65100';c.beginPath();c.ellipse(-L*.8-.0,L,.38,.12,0,0,7);c.fill();if(GS.ev&&k>.9)for(let j=0;j<4;j++){const u=((T*.7+j*.27)%1);c.fillStyle=['#e53935','#1e88e5','#43a047','#8e24aa'][j];c.beginPath();c.arc(-L*.8*u,L*u-.12,.1,0,7);c.fill();c.fillStyle='#ffcc80';c.beginPath();c.arc(-L*.8*u,L*u-.27,.07,0,7);c.fill()}c.restore()}
+ c.fillStyle='#e65100';c.beginPath();c.ellipse(-L*.8-.0,L,.38,.12,0,0,7);c.fill();if(GS.ds&&k>.9)for(let j=0;j<GS.ds.length;j++){const u=GS.ds[j];c.fillStyle=['#e53935','#1e88e5','#43a047','#8e24aa'][j%4];c.beginPath();c.arc(-L*.8*u,L*u-.12,.1,0,7);c.fill();c.fillStyle='#ffcc80';c.beginPath();c.arc(-L*.8*u,L*u-.27,.07,0,7);c.fill()}c.restore()}
 function pylon(c){const o=GS.eoff||0;c.fillStyle=shade(LV[0],-.3);c.fillRect(-.12,-.64-o,.24,.42+o)}
 function bodyPath(c,hf,hb){c.beginPath();c.moveTo(-.51,hb?-.5:-.2);if(hf){c.lineTo(.51,-.5);c.lineTo(.51,.5)}else{c.lineTo(0,-.5);c.bezierCurveTo(.4,-.5,.7,-.25,.7,.08);c.bezierCurveTo(.7,.32,.42,.5,.05,.5)}c.lineTo(-.51,hb?.5:.3);c.closePath()}
 function aeroPath(c,hf,hb){c.beginPath();c.moveTo(-.51,hb?-.44:-.1);if(hf){c.lineTo(.51,-.44);c.lineTo(.51,.44)}else{c.lineTo(-.1,-.44);c.bezierCurveTo(.35,-.44,.75,-.22,.9,.05);c.bezierCurveTo(.75,.22,.35,.44,-.05,.44)}c.lineTo(-.51,hb?.44:.12);c.closePath()}
@@ -250,7 +250,7 @@ function wheelDraw(c,x,y,r,rot,twin){if(twin){c.fillStyle='#0b0b0b';c.beginPath(
  c.save();c.translate(x,y);c.rotate(rot);c.fillStyle='#eceff1';for(let i=0;i<5;i++){c.rotate(1.2566);c.beginPath();c.arc(r*.27,0,r*.06,0,7);c.fill()}c.fillStyle='#37474f';c.beginPath();c.arc(0,0,r*.12,0,7);c.fill();c.restore()}
 const PR={wingjet:2,winglong:2,wingshort:2,fan:1.5,tprop:1.5,ajet:1.5,radial:1.5,gear:-1,door:.4,tank:1,wheel:-1,body:0,cockpit:1,tail:1,wing:2,engine:1.5,prop:1.5,jet:1.5,label:5};
 function drawPlane(c,ps,cx,cy,s,fl,pr){const st=new Set(ps.map(q=>q.x+','+q.y)),gp0=GS.p,gdo=GD;
-  for(const q of [...ps].sort((a,b)=>(PR[a.t]||0)-(PR[b.t]||0))){GD=q.t=='door'&&q.dp!=null?q.dp:gdo;GS.sl=0;GS.ev=0;if(q.t=='door'&&(q.sl||0)>0){let low=1e9;for(const o of ps){const g=o.t=='gear',w=g||o.t=='wheel';low=Math.min(low,o.y-cy-(g?1:w?.8:.5))}GS.sl=q.sl;GS.ev=q.ev||0;GS.sh=Math.max(.8,(q.y-cy-.5)-low)}GS.p=q.t=='gear'&&q.gp!=null?q.gp:gp0;GS.ctop=0;GS.wf=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x+1&&o.y==q.y);GS.wb=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x-1&&o.y==q.y);GS.eoff=0;if(isEng(q.t)){if(ps.some(w=>isWing(w.t)&&w.x==q.x&&w.y==q.y))GS.eoff=.62;else if(ps.some(w=>w.t=='winglong'&&w.x==q.x&&w.y==q.y+1))GS.eoff=.42}GS.pyl=isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&(w.y==q.y+1||w.y==q.y));c.save();c.translate((q.x-cx)*s,-(q.y-cy)*s);c.scale(s,s);if(GS.eoff)c.translate(0,GS.eoff);if(q.t=='gear'){GS.n=q.x-cx>3?1:0;let up=1;while(up<3&&!st.has(q.x+','+(q.y+up)))up++;if(up>=3)up=1;const ry=q.y+up;GS.bay=-(up-.5);GS.d=(st.has((q.x+1)+','+ry)&&st.has((q.x+2)+','+ry))||!st.has((q.x-1)+','+ry)?1:-1}dp(c,q.t,q.dead?0:(fl||0),q.dead?pr*.1:(pr||0),st.has((q.x+1)+','+q.y),st.has((q.x-1)+','+q.y),q);c.restore()}GS.p=gp0;GD=gdo}
+  for(const q of [...ps].sort((a,b)=>(PR[a.t]||0)-(PR[b.t]||0))){GD=q.t=='door'&&q.dp!=null?q.dp:gdo;GS.sl=0;GS.ev=0;GS.ds=null;if(q.t=='door'&&(q.sl||0)>0){let low=1e9;for(const o of ps){const g=o.t=='gear',w=g||o.t=='wheel';low=Math.min(low,o.y-cy-(g?1:w?.8:.5))}GS.sl=q.sl;GS.ev=q.ev||0;GS.ds=q.dots||null;GS.sh=Math.max(.8,(q.y-cy-.5)-low)}GS.p=q.t=='gear'&&q.gp!=null?q.gp:gp0;GS.ctop=0;GS.wf=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x+1&&o.y==q.y);GS.wb=isWing(q.t)&&ps.some(o=>isWing(o.t)&&o.x==q.x-1&&o.y==q.y);GS.eoff=0;if(isEng(q.t)){if(ps.some(w=>isWing(w.t)&&w.x==q.x&&w.y==q.y))GS.eoff=.62;else if(ps.some(w=>w.t=='winglong'&&w.x==q.x&&w.y==q.y+1))GS.eoff=.42}GS.pyl=isEng(q.t)&&ps.some(w=>isWing(w.t)&&w.x==q.x&&(w.y==q.y+1||w.y==q.y));c.save();c.translate((q.x-cx)*s,-(q.y-cy)*s);c.scale(s,s);if(GS.eoff)c.translate(0,GS.eoff);if(q.t=='gear'){GS.n=q.x-cx>3?1:0;let up=1;while(up<3&&!st.has(q.x+','+(q.y+up)))up++;if(up>=3)up=1;const ry=q.y+up;GS.bay=-(up-.5);GS.d=(st.has((q.x+1)+','+ry)&&st.has((q.x+2)+','+ry))||!st.has((q.x-1)+','+ry)?1:-1}dp(c,q.t,q.dead?0:(fl||0),q.dead?pr*.1:(pr||0),st.has((q.x+1)+','+q.y),st.has((q.x-1)+','+q.y),q);c.restore()}GS.p=gp0;GD=gdo}
 function thumb(cv,ps){const c=cv.getContext('2d');cv.width=300;cv.height=160;c.clearRect(0,0,300,160);
  if(ps.par){const q=ps.par;c.save();c.translate(150,95);drawPar(c,q,q.len/2-.5,(q.dia-1)/2,Math.min(280/(q.len+2),8),0,0);c.restore();return}if(!ps.length)return;const s=stats(ps);let a=1e9,b=-1e9,d=1e9,e=-1e9;
  for(const q of ps){a=Math.min(a,q.x);b=Math.max(b,q.x);d=Math.min(d,q.y);e=Math.max(e,q.y)}
@@ -266,12 +266,14 @@ const presets=[
 ];
 const DEF=['#e8eef5','#e53935'];let LV=DEF,RW=0;
 [['#f5f0e0','#1565c0'],['#90a4ae','#ff6f00'],['#ffffff','#00897b'],['#e53935','#fdd835'],['#f5f5f5','#1e88e5'],['#ffd54f','#37474f']].forEach((c,i)=>presets[i].c=c);
-const NS=241;
+const SB=316.4,NS=481,MAPLEN=(NS-1)*25;
 function flat(h,rs){rs.forEach(r=>{for(let i=0;i<NS;i++){const x=i*25;if(x>=r.x-60&&x<=r.x+r.len+60)h[i]=r.e}})}
 function defMap(){const h=[];for(let i=0;i<NS;i++){const x=i*25,f=Math.min(1,Math.max(0,(x-1000)/600));h.push(Math.round(Math.max(0,Math.sin(x/700-1)*250+Math.sin(x/230)*35)*f))}
  for(let i=0;i<NS;i++){const x=i*25;if(x>=3280&&x<=3640){const t=(x-3280)/360;h[i]=Math.round(Math.min(h[i],-55*Math.pow(Math.sin(Math.PI*t),.6)))}}
- const rw=[{x:0,len:900,e:0,n:'Home Field'},{x:2500,len:700,e:150,n:'Hilltop Strip'},{x:1400,len:600,e:120,n:'Cliff Strip'},{x:3700,len:600,e:60,n:'Coast Strip'},{x:4700,len:800,e:0,n:'Valley Airport'}];flat(h,rw);return{h,rw}}
-let MAP;try{MAP=JSON.parse(localStorage.getItem('ss2d_map2'));if(!MAP||MAP.h.length!=NS)throw 0}catch(e){MAP=defMap()}
+ for(let i=0;i<NS;i++){const x=i*25;if(x>=8900&&x<=9300){const t=(x-8900)/400;h[i]=Math.round(Math.min(h[i],-45*Math.pow(Math.sin(Math.PI*t),.6)))}}
+ const rw=[{x:0,len:900,e:0,n:'Home Field'},{x:2500,len:700,e:150,n:'Hilltop Strip'},{x:1400,len:600,e:120,n:'Cliff Strip'},{x:3700,len:600,e:60,n:'Coast Strip'},{x:4700,len:800,e:0,n:'Valley Airport'}];
+ for(const [x,len,n] of [[6800,700,'Ridge Strip'],[8100,600,'Lake Strip'],[9700,700,'Sea Strip'],[11000,900,'Far Airport']])rw.push({x,len,e:Math.max(0,h[Math.round((x+len/2)/25)]),n});flat(h,rw);return{h,rw}}
+let MAP;try{MAP=JSON.parse(localStorage.getItem('ss2d_map2'));if(MAP&&MAP.h&&MAP.h.length==241){const d=defMap();for(let i=241;i<NS;i++)MAP.h.push(d.h[i]);d.rw.filter(r=>r.x>=6000).forEach(r=>MAP.rw.push(r))}if(!MAP||MAP.h.length!=NS)throw 0}catch(e){MAP=defMap()}
 const rawH=x=>{const i=Math.max(0,Math.min(NS-1,x/25)),a=Math.floor(i),t=i-a,h=MAP.h,p0=h[Math.max(a-1,0)],p1=h[a],p2=h[Math.min(a+1,NS-1)],p3=h[Math.min(a+2,NS-1)];return .5*(2*p1+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t*t+(-p0+3*p1-3*p2+p3)*t*t*t)};
 const gh=x=>Math.max(0,rawH(x)),isWater=x=>rawH(x)<-.4;
 const slope=x=>(gh(x+4)-gh(x-4))/8;
@@ -288,7 +290,7 @@ const MT=[['up','▲ Raise'],['dn','▼ Lower'],['sm','≈ Smooth'],['fl','▬ F
 function mPush(){mu.push(JSON.stringify(MAP));if(mu.length>40)mu.shift();mr=[]}
 function mResize(){const r=mc.getBoundingClientRect();mdpr=devicePixelRatio||1;mc.width=Math.max(200,Math.round(r.width*mdpr));mc.height=Math.max(150,Math.round(r.height*mdpr));mClamp();drawMap()}
 const mW=()=>mc.width/mdpr,mHt=()=>mc.height/mdpr,mPm=()=>mW()/6000*mv.z,mYm=()=>(mHt()-8)/1000,mBy=()=>mHt()-4-100*mYm();
-function mClamp(){const vw=mW()/mPm();mv.x0=Math.max(0,Math.min(6000-vw,mv.x0));try{$('mScroll').value=6000-vw>0?Math.round(mv.x0/(6000-vw)*1000):0}catch(e){}}
+function mClamp(){const vw=mW()/mPm();mv.x0=Math.max(0,Math.min(MAPLEN-vw,mv.x0));try{$('mScroll').value=MAPLEN-vw>0?Math.round(mv.x0/(MAPLEN-vw)*1000):0}catch(e){}}
 const mX=px=>mv.x0+px/mPm(),mH=py=>(mBy()-py)/mYm();
 function mProt(j){return MAP.rw.some(q=>j*25>=q.x-60&&j*25<=q.x+q.len+60)}
 function mBlend(r){const i0=Math.round((r.x-60)/25),i1=Math.round((r.x+r.len+60)/25);for(let k=1;k<=10;k++){const t=k/11;let j=i0-k;if(j>=0&&!MAP.rw.some(q=>q!==r&&j*25>=q.x-60&&j*25<=q.x+q.len+60))MAP.h[j]=Math.round(r.e*(1-t)+MAP.h[j]*t);j=i1+k;if(j<NS&&!MAP.rw.some(q=>q!==r&&j*25>=q.x-60&&j*25<=q.x+q.len+60))MAP.h[j]=Math.round(r.e*(1-t)+MAP.h[j]*t)}}
@@ -319,7 +321,7 @@ function mEd(e,dn){const r=mc.getBoundingClientRect(),px=e.clientX-r.left,py=e.c
  if(mtool=='rw'){if(dn){const q={x:Math.max(0,Math.min(5900,Math.round(xm/50)*50)),len:700,e:Math.round(MAP.h[i]),n:'Strip '+(MAP.rw.length+1)};MAP.rw.push(q);mFixRw();msel=MAP.rw.length-1;mSync()}}
  else if(mtool=='del'){if(dn){const k=mRwAt(px);if(k>=0&&MAP.rw.length>1){MAP.rw.splice(k,1);msel=-1;RW=Math.min(RW,MAP.rw.length-1);mSync()}}}
  else if(mtool=='rsel'){if(dn){const k=mRwAt(px);msel=k;if(k>=0){const q=MAP.rw[k],edge=Math.abs(xm-(q.x+q.len))<14/mPm();mMove={k,mode:edge?'len':'move',dx:xm-q.x}}else mMove=null;mSync()}
-  else if(mMove){const q=MAP.rw[mMove.k];if(mMove.mode=='len')q.len=Math.max(300,Math.min(2500,Math.round((xm-q.x)/50)*50));else{q.x=Math.max(0,Math.min(6000-q.len,Math.round((xm-mMove.dx)/50)*50));q.e=Math.round(gh(q.x+q.len/2))}mSync()}}
+  else if(mMove){const q=MAP.rw[mMove.k];if(mMove.mode=='len')q.len=Math.max(300,Math.min(2500,Math.round((xm-q.x)/50)*50));else{q.x=Math.max(0,Math.min(MAPLEN-q.len,Math.round((xm-mMove.dx)/50)*50));q.e=Math.round(gh(q.x+q.len/2))}mSync()}}
  else if(mtool=='hill'||mtool=='val'){if(dn)mStamp(i,mtool=='hill'?1:-1)}
  else{if(dn)mflat=Math.max(-100,Math.min(900,mH(py)));mBrush(i,mtool)}
  if(!dn&&mMove&&mtool=='rsel')mFixRw();else if(dn&&(mtool=='rsel'||mtool=='rw'))mFixRw();
@@ -338,7 +340,7 @@ function mGen(k){const sd=Math.random()*1000,rr=(a,b)=>a+(b-a)*(Math.sin(sd*a)*.
  [['flat','Flat'],['hills','Hills'],['mount','Mountains'],['canyon','Canyon'],['island','Island'],['lake','Lake']].forEach(([k,n])=>{const b=document.createElement('button');b.className='btn';b.textContent=n;b.onclick=()=>{mPush();mGen(k);drawMap()};$('mGens').appendChild(b)});
  $('mSz').oninput=e=>{mSize=+e.target.value;$('mSzv').textContent=mSize};$('mSt').oninput=e=>{mStr=+e.target.value;$('mStv').textContent=mStr};
  $('mRn').oninput=e=>{const r=MAP.rw[msel];if(r){r.n=e.target.value||'Strip';drawMap()}};
- $('mRl').oninput=e=>{const r=MAP.rw[msel];if(r){r.len=+e.target.value;if(r.x+r.len>6000)r.x=6000-r.len;mFixRw();mSync();drawMap()}};$('mRl').onpointerdown=mPush;
+ $('mRl').oninput=e=>{const r=MAP.rw[msel];if(r){r.len=+e.target.value;if(r.x+r.len>MAPLEN)r.x=MAPLEN-r.len;mFixRw();mSync();drawMap()}};$('mRl').onpointerdown=mPush;
  $('mRe').oninput=e=>{const r=MAP.rw[msel];if(r){r.e=+e.target.value;mFixRw();mSync();drawMap()}};$('mRe').onpointerdown=mPush;
  $('mRs').onclick=()=>{if(msel>=0){RW=msel;drawMap()}};$('mRd').onclick=()=>{if(msel>=0&&MAP.rw.length>1){mPush();MAP.rw.splice(msel,1);msel=-1;RW=Math.min(RW,MAP.rw.length-1);mSync();drawMap()}};
  $('mReset').onclick=()=>{mPush();MAP=defMap();msel=-1;mSync();drawMap()}})();
@@ -349,7 +351,7 @@ mc.onpointerleave=()=>{if(!mdrag){mpos=null;drawMap()}};
 function mZoom(f,cx){cx=cx==null?mW()/2:cx;const xm=mX(cx);mv.z=Math.max(1,Math.min(10,mv.z*f));mv.x0=xm-cx/mPm();mClamp();drawMap()}
 mc.addEventListener('wheel',e=>{e.preventDefault();mZoom(e.deltaY<0?1.25:.8,e.clientX-mc.getBoundingClientRect().left)},{passive:false});
 $('mZp').onclick=()=>mZoom(1.4);$('mZm').onclick=()=>mZoom(1/1.4);
-$('mScroll').oninput=e=>{const vw=mW()/mPm();mv.x0=+e.target.value/1000*(6000-vw);drawMap()};
+$('mScroll').oninput=e=>{const vw=mW()/mPm();mv.x0=+e.target.value/1000*(MAPLEN-vw);drawMap()};
 $('mUndo').onclick=()=>{if(mu.length){mr.push(JSON.stringify(MAP));MAP=JSON.parse(mu.pop());msel=Math.min(msel,MAP.rw.length-1);mSync();drawMap()}};
 $('mRedo').onclick=()=>{if(mr.length){mu.push(JSON.stringify(MAP));MAP=JSON.parse(mr.pop());msel=Math.min(msel,MAP.rw.length-1);mSync();drawMap()}};
 function mSave(){try{localStorage.setItem('ss2d_map2',JSON.stringify(MAP))}catch(e){}}
@@ -447,8 +449,9 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  const aa=Math.abs(aoa),sg=Math.sign(aoa);
  const sE=s.sa+sim.fa*.09,CL=aa<sE?s.a*aoa:sg*Math.max(.4,s.a*sE*(1-(aa-sE)*1.5));
  sim.stall=aa>sE&&v>8;
+ {if(v>SB&&!sim.sb){sim.sb=1;sim.shake=Math.max(sim.shake||0,.7);note('SOUND BARRIER BROKEN! BOOM!');P_('flash',sim.x,sim.y,0,0,.5,4,26,0,0);P_('ring',sim.x,sim.y,0,0,1.4,2,60,0,0);P_('ring',sim.x,sim.y,0,0,1.8,1,90,0,0)}else if(v<SB-8&&sim.sb)sim.sb=0;if(v>SB*.93&&v<SB*1.06){sim.sbT=(sim.sbT||0)-dt;if(sim.sbT<=0){sim.sbT=.12;P_('ring',sim.x+3,sim.y,0,0,.5,1,5,0,0)}}}
  {const hands=!window.NOTRIM&&!sim.al&&!K.up&&!K.down&&!MP&&sim.ga>.5&&v>8;if(hands){if(sim.hP==null)sim.hP=sim.th;{const vmin=1.15*Math.sqrt((s.M+sim.fuel*.05)*G/(.05*Math.max(.5,s.S)*(s.a*sE+.12+sim.fl*.3)));if(Math.abs(sim.hP)<1.1){if(v<vmin)sim.hP-=(vmin-v)*.05*dt;else if(v>vmin*1.2)sim.hP+=((sim.hP0==null?sim.th:sim.hP0)-sim.hP)*.4*dt}}sim.tr=Math.max(-.6,Math.min(.6,(sim.tr||0)+(sim.hP-sim.th)*2.5*dt));el=Math.max(-.7,Math.min(.7,(sim.hP-sim.th)*4-sim.om*.8+sim.tr));if(Math.abs(sim.hP)<1.1&&aoa>sE*.85&&aoa<2)el=Math.min(el,-.5)}else{sim.hP=sim.th;sim.hP0=sim.th;sim.tr=(sim.tr||0)*Math.max(0,1-dt*.5)}}if(sim.stall){sim.om-=sg*1.5*dt;sim.shake=Math.max(sim.shake,.15)}
- const lift=v2*rho*.05*s.S*(CL+.12+sim.fl*.3)*(em.wing?.55:1)*(1-.65*sim.sp)*(1+Math.max(0,1-(sim.y-sim.hg-gh(sim.x))/6)*.15)*(sim.gl>0&&sim.ep<.35&&el<.05&&sim.vy<=.5?.4:1)*(v<1?0:1),drag=v2*rho*(.003*(s.N+(1-sim.gp)*3+sim.dop*2)+s.S*(sim.fl*.012+sim.sp*.035)+s.ki*s.S*CL*CL+(sim.stall?.01*s.S:0))*(1+Math.pow(Math.max(0,(v-200)/60),2)*.8);
+ const lift=v2*rho*.05*s.S*(CL+.12+sim.fl*.3)*(em.wing?.55:1)*(1-.65*sim.sp)*(1+Math.max(0,1-(sim.y-sim.hg-gh(sim.x))/6)*.15)*(sim.gl>0&&sim.ep<.35&&el<.05&&sim.vy<=.5?.4:1)*(v<1?0:1),drag=v2*rho*(.003*(s.N+(1-sim.gp)*3+sim.dop*2)+s.S*(sim.fl*.012+sim.sp*.035)+s.ki*s.S*CL*CL+(sim.stall?.01*s.S:0))*(1+Math.pow(Math.max(0,(v-200)/60),2)*.8)*(1+1.6*Math.exp(-Math.pow((v-SB)/22,2)));
  const pe=Math.max(.4,1-v/300);let thS=0;for(const q of eng0){const z=ENGT[q.t][0]*[.7,1,1.5][q.v==null?1:q.v];thS+=z*(q.dead?0:1)*(q.fire?.55:1)*(PROPT.includes(q.t)?pe:1)}
  const th=(sim.fuel>0&&sim.on?1:0)*sim.ep*thS*(.4+.6*rho);let Fx=th*Math.cos(sim.th),Fy=th*Math.sin(sim.th);
  if(v>.5){Fx+=-drag*vx/v-lift*vy/v;Fy+=-drag*vy/v+lift*vx/v}
@@ -459,6 +462,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  {const od=lv.filter(q=>q.t=='door'&&(q.dp||0)>.3);if(od.length&&v>30&&sim.y-sim.hg-gh(sim.x)>2)lose(od,6)}
  if(sim.crash>0)return;
  const tl=s.TL,ac=Math.max(-.8,Math.min(.8,aoa));
+ {const nw0=sim.live.filter(q=>isWing(q.t)).length;if(sim.wc!=null&&nw0<sim.wc)note('WING DAMAGE');sim.wc=nw0}
  const wl=Math.max(0,Math.min(.9,(sim.nw?1-lv.filter(q=>isWing(q.t)).length/sim.nw:0)+(em.wing?.25:0)));
  const kth=0,wash=60*sim.ep*(s.thrust?s.THP/s.thrust:0)*(sim.fuel>0&&sim.on?1:0),qa=(sim.ga>.5?Math.max(v2,60):v2)+wash;
  let al=(qa/900)*(el*2*(1+tl*.5)-(ac-kth)*3*(.5+tl*.5)*s.sm-wl*1.4)*Math.sqrt(12/M)-3.5*sim.om;
@@ -486,15 +490,16 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
    if(sim.crash>0)return;sim.vy=sl*sim.vx}
   if(cw&&!co)sim.vx-=sim.vx*.012*dt;else sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),(cw?.25:.5)*G*dt);
   if((K.br||(sim.al&&sim.alAir))&&(cw||sim.gl>0)){const bd=(9+Math.abs(sim.vx)*.12)*dt;sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),bd)}
-  if(cw&&sim.th<0){sim.th*=Math.max(0,1-dt*10);if(sim.om<0)sim.om*=.5}
-  {const tg=(sim.ep>.35&&v>16)?Math.min(.13,(sim.tm==null?.13:sim.tm)*.85):0;if(cw&&el<.05&&sim.th>tg+.004){sim.th=Math.max(tg,sim.th-((sim.th-tg)*Math.min(1,dt*2.5)+dt*.1));if(sim.om>0)sim.om=0}}
-  if(sim.tm!=null&&el<.05&&sim.th>sim.tm*.9){sim.th+=(sim.tm*.9-sim.th)*Math.min(1,dt*6);if(sim.om>0)sim.om*=.5}
+  const sa=Math.atan(sl);
+  if(cw&&sim.th<sa){sim.th=sa+(sim.th-sa)*Math.max(0,1-dt*10);if(sim.om<0)sim.om*=.5}
+  {const tg=sa+((sim.ep>.35&&v>16)?Math.min(.13,(sim.tm==null?.13:sim.tm)*.85):0);if(cw&&el<.05&&sim.th>tg+.004){sim.th=Math.max(tg,sim.th-((sim.th-tg)*Math.min(1,dt*2.5)+dt*.1));if(sim.om>0)sim.om=0}}
+  if(sim.tm!=null&&el<.05&&sim.th>sim.tm*.9+sa){sim.th+=(sim.tm*.9+sa-sim.th)*Math.min(1,dt*6);if(sim.om>0)sim.om*=.5}
   if(cw)snapWheels();sim.gl=cw?.25:sim.gl
-  if(cw&&!co&&v>16&&!K.up&&!K.down&&s.S&&sim.ep>.35)sim.th+=(Math.min(.13,(sim.tm==null?.13:sim.tm)*.85)-sim.th)*dt*1.2;
+  if(cw&&!co&&v>16&&!K.up&&!K.down&&s.S&&sim.ep>.35)sim.th+=(sa+Math.min(.13,(sim.tm==null?.13:sim.tm)*.85)-sim.th)*dt*1.2;
   if(!cw)sim.om*=.5;
   if(Math.abs(sim.vx)<.05&&sim.thr==0)sim.vx=0}
  track(dt,ng);
- if(sim.crash<=0)$('msg').textContent=sim.ej&&!sim.ej.done?(sim.ej.chute?'PARACHUTE OPEN':'EJECTING...'):sim.pick?'TAP '+(sim.pick=='gear'?'A LANDING GEAR':'AN ENGINE')+' (TAP SKY TO CANCEL)':sim.nt>0?sim.ntx:sim.af&&!sim.boats.length&&sim.afT<60?'ON THE WATER. OPEN DOORS, LAUNCH BOATS':sim.bt>0?'BIRD STRIKE!':sim.tsT>0?'TAIL STRIKE!':wl>.05&&!em.fire?'WING DAMAGE':em.fire?'ENGINE FIRE!':sim.ter?'TERRAIN - PULL UP':sim.stall?'STALL':sim.fuel<=0?'OUT OF FUEL':em.leak?'FUEL LEAK':''}
+ if(sim.crash<=0)$('msg').textContent=sim.ej&&!sim.ej.done?(sim.ej.chute?'PARACHUTE OPEN':'EJECTING...'):sim.pick?'TAP '+(sim.pick=='gear'?'A LANDING GEAR':'AN ENGINE')+' (TAP SKY TO CANCEL)':sim.nt>0?sim.ntx:sim.af&&!sim.boats.length&&sim.afT<60?'ON THE WATER. OPEN DOORS, LAUNCH BOATS':sim.bt>0?'BIRD STRIKE!':sim.tsT>0?'TAIL STRIKE!':em.fire?'ENGINE FIRE!':sim.ter?'TERRAIN - PULL UP':sim.stall?'STALL':sim.fuel<=0?'OUT OF FUEL':em.leak?'FUEL LEAK':''}
 function track(dt,ng){const st=sim.st,agl=sim.y-sim.hg-gh(sim.x),sp=Math.hypot(sim.vx,sim.vy);st.t+=dt;st.dist+=Math.abs(sim.vx)*dt;st.maxAlt=Math.max(st.maxAlt,sim.y-sim.hg);st.maxSpd=Math.max(st.maxSpd,sp);st.maxG=Math.max(st.maxG,Math.min(12,ng));
  if(agl>6)st.up=1;if(st.td&&agl>1.5)st.bounced=1;
  if(st.up&&agl<1.5&&sp<.6){st.stop+=dt;if(st.stop>1.6&&!st.shown)offerResults('land')}else st.stop=0}
@@ -689,7 +694,7 @@ function autoEl(dt){
  if(agl>10)sim.alAir=1;if(agl<1.5&&!sim.alAir){sim.al=0;note('AUTO-LAND WORKS IN THE AIR');return 0}
  if(!sim.alV)sim.alV=Math.max(14,1.3*Math.sqrt(M*G/(.05*Math.max(.5,sim.s.S)*(sim.s.a*sim.s.sa+.12+.6))));
  let r=sim.alR;if(r&&r.x+r.len*.75<=sim.x)r=null;
- if(!r){const rs=MAP.rw.filter(q=>q.x+q.len*.75>sim.x).sort((a,b)=>a.x-b.x);if(!rs.length){sim.al=0;note('NO RUNWAY AHEAD');return 0}const alt=sim.y-sim.hg,rng=sim.s.E&&!window.INF?sim.fuel/Math.max(.15,sim.ep*(sim.s.B||sim.s.E)*.35)*Math.max(sp,15)*.9:1e9,ok=(q,k)=>{const ax=q.x+Math.min(q.len*.2,120);if(ax-sim.x<(alt-q.e-30)/k||ax-sim.x>rng)return 0;for(let x=sim.x+50;x<q.x-70;x+=50)if(Math.min(alt,q.e+(ax-x)*k)<gh(x)+45)return 0;return 1};r=rs.find(q=>ok(q,.12))||rs.find(q=>ok(q,.18))||rs.find(q=>ok(q,.26))||rs.filter(q=>q.x+Math.min(q.len*.2,120)-sim.x<=rng).pop()||rs[0];sim.alR=r;note('AUTO-LAND: '+r.n)}
+ if(!r){const rs=MAP.rw.filter(q=>q.x+q.len*.75>sim.x).sort((a,b)=>a.x-b.x).slice(0,4);if(!rs.length){sim.al=0;note('NO RUNWAY AHEAD');return 0}const alt=sim.y-sim.hg,rng=sim.s.E&&!window.INF?sim.fuel/Math.max(.15,sim.ep*(sim.s.B||sim.s.E)*.35)*Math.max(sp,15)*.9:1e9,ok=(q,k)=>{const ax=q.x+Math.min(q.len*.2,120);if(ax-sim.x<(alt-q.e-30)/k||ax-sim.x>rng)return 0;for(let x=sim.x+50;x<q.x-70;x+=50)if(Math.min(alt,q.e+(ax-x)*k)<gh(x)+45)return 0;return 1};r=rs.find(q=>ok(q,.12))||rs.find(q=>ok(q,.18))||rs.find(q=>ok(q,.26))||rs.find(q=>{const d=q.x+Math.min(q.len*.2,120)-sim.x;return d>=(alt-q.e-30)/.3&&d<=rng})||rs.filter(q=>q.x+Math.min(q.len*.2,120)-sim.x<=rng).pop()||rs[0];sim.alR=r;note('AUTO-LAND: '+r.n)}
  const ax=r.x+Math.min(r.len*.2,120),d=ax-sim.x,h=Math.max(0,sim.y-sim.hg-r.e);
  if(d<3500||h<400){if(!sim.live.some(q=>q.jam))sim.gu=0}
  sim.fl=2;
@@ -736,9 +741,15 @@ function toggleOneDoor(q){if(!sim||sim.crash>0)return;if(sim.em.dj){note('DOOR J
 function evacAll(){if(!sim||sim.crash>0)return;if(!sim.live.some(q=>q.t=='door')){note('NO DOORS ON THIS PLANE');return}sim.dg=1;sim.live.forEach(q=>{if(q.t=='door')q.dg=1});note(Math.hypot(sim.vx,sim.vy)<4?'EVACUATION: DOORS OPEN, SLIDES OUT':'DOORS OPEN. SLIDES NEED THE PLANE STOPPED')}
 function launchBoats(){if(!sim||sim.crash>0)return;if(!sim.af){note('BOATS NEED WATER');return}if(!sim.live.some(q=>q.t=='door'&&(q.dp||0)>.5)){note('OPEN A DOOR FIRST');return}if(sim.boats.length){note('BOATS ARE ALREADY OUT');return}const n=Math.max(1,Math.min(10,Math.ceil(sim.ev.pax/24)));for(let i=0;i<n;i++)sim.boats.push({x:sim.x+(i%2?1:-1)*(7+Math.floor(i/2)*5),vx:(rnd()-.5)*.5,ph:rnd()*6,cap:24});note('BOATS LAUNCHED')}
 function evacStep(dt){const ev=sim.ev;if(!ev||sim.crash>0)return;const still=Math.hypot(sim.vx,sim.vy)<4&&(sim.gnd||sim.af||sim.gl>0);let rate=0;
- for(const q of sim.live){if(q.t!='door'){continue}q.ev=0;const v=q.v||0;if(!still)continue;if(v<2&&q.sl>.95)rate+=v==0?1.6:1.1,q.ev=1;else if(v==2&&q.dp>.9)rate+=2,q.ev=1;else if(v==3&&q.dp>.9)rate+=.9,q.ev=1}
- const out=ev.saved+ev.lost+ev.dead,rem=ev.pax-out;if(rem<=0)for(const q of sim.live)if(q.t=='door')q.ev=0;
- if(rate>0&&rem>0){ev.started=1;ev.acc+=rate*dt;let n=Math.min(Math.floor(ev.acc),rem);if(n>0){ev.acc-=n;if(sim.af&&!sim.boats.length){ev.accL+=n*.4;const l=Math.floor(ev.accL);ev.accL-=l;ev.lost+=l;ev.saved+=n-l}else ev.saved+=n}}
+ const esc=n=>{if(sim.af&&!sim.boats.length){ev.accL+=n*.4;const l=Math.floor(ev.accL);ev.accL-=l;ev.lost+=l;ev.saved+=n-l}else ev.saved+=n};
+ let spare=ev.pax-ev.saved-ev.lost-ev.dead;for(const q of sim.live)if(q.t=='door'&&q.dots)spare-=q.dots.length;
+ for(const q of sim.live){if(q.t!='door'){continue}q.ev=0;const v=q.v||0;
+  if(!still){q.dots=null;continue}
+  if(v<2&&q.sl>.95){q.dots=q.dots||[];q.sp=(q.sp||0)+(v==0?1.6:1.1)*dt;while(q.sp>=1){q.sp--;if(spare>0){q.dots.push(0);spare--;ev.started=1}}if(spare<=0)q.sp=Math.min(q.sp,.99);
+   let n=0;q.dots=q.dots.map(u=>u+dt*.7).filter(u=>{if(u>=1){n++;return false}return true});if(n)esc(n);q.ev=q.dots.length?1:0}
+  else if(v==2&&q.dp>.9)rate+=2,q.ev=1;else if(v==3&&q.dp>.9)rate+=.9,q.ev=1;else if(q.dots&&q.dots.length){let n=q.dots.length;q.dots=null;esc(n)}}
+ const out=ev.saved+ev.lost+ev.dead,rem=ev.pax-out;if(rem<=0)for(const q of sim.live)if(q.t=='door'&&(q.v||0)>=2)q.ev=0;
+ if(rate>0&&spare>0){ev.started=1;ev.acc+=rate*dt;let n=Math.min(Math.floor(ev.acc),spare);if(n>0){ev.acc-=n;esc(n)}}
  const danger=sim.live.some(q=>q.fire)||(sim.af&&(sim.sk||0)>0)||(sim.af&&sim.afT>60);
  if(danger&&!ev.dang){ev.dang=1;ev.dt=0;}
   if(ev.started&&ev.pax-ev.saved-ev.lost-ev.dead<=0&&!ev.done){ev.done=1;note('EVERYONE IS OUT!')}}
