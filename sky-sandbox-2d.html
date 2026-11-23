@@ -140,7 +140,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="ejc" class="hidden"><div class="card"><h2>Eject now?</h2><p>The pilot leaves the plane by parachute. The plane keeps flying without a pilot, and the passengers stay on board.</p><div class="rb2"><button class="btn big" id="ejY" style="background:#ff5252;border-color:#ff8a80;color:#fff">Eject!</button><button class="btn" id="ejN">Stay</button></div></div></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.33 · 2026-11-23 13:30 UTC</span>
+<span id="ver">v1.0.34 · 2026-11-23 16:33 UTC</span>
 <script>
 (()=>{let lt=0;const g=e=>{if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||''))e.preventDefault()};document.addEventListener('dblclick',g);document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#hud,canvas'))e.preventDefault()});document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&e.target.tagName=='CANVAS')e.preventDefault();lt=n},{passive:false})})();
 const $=id=>document.getElementById(id);
@@ -270,7 +270,7 @@ const presets=[
 ];
 const DEF=['#e8eef5','#e53935'];let LV=DEF,RW=0;
 [['#f5f0e0','#1565c0'],['#90a4ae','#ff6f00'],['#ffffff','#00897b'],['#e53935','#fdd835'],['#f5f5f5','#1e88e5'],['#ffd54f','#37474f']].forEach((c,i)=>presets[i].c=c);
-var AFT=6,SLK=.9;const SB=316.4,NS=481,MAPLEN=(NS-1)*25;
+var AFT=6,SLK=.9,PITCH_RATE=.85;const SB=316.4,NS=481,MAPLEN=(NS-1)*25;
 function flat(h,rs){rs.forEach(r=>{for(let i=0;i<NS;i++){const x=i*25;if(x>=r.x-60&&x<=r.x+r.len+60)h[i]=r.e}})}
 function defMap(){const h=[];for(let i=0;i<NS;i++){const x=i*25,f=Math.min(1,Math.max(0,(x-1000)/600));h.push(Math.round(Math.max(0,Math.sin(x/700-1)*250+Math.sin(x/230)*35)*f))}
  for(let i=0;i<NS;i++){const x=i*25;if(x>=3280&&x<=3640){const t=(x-3280)/360;h[i]=Math.round(Math.min(h[i],-55*Math.pow(Math.sin(Math.PI*t),.6)))}}
@@ -461,7 +461,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  const sE=s.sa+sim.fa*.09,CL=aa<sE?s.a*aoa:sg*Math.max(.4,s.a*sE*(1-(aa-sE)*1.5));
  sim.stall=aa>sE&&v>8;
  {{const t=v<SB?Math.exp(-Math.pow((v-SB)/(.07*SB),2)):Math.exp(-Math.pow((v-SB)/(.025*SB),2));sim.sbI=(sim.sbI||0)+(t-(sim.sbI||0))*Math.min(1,dt*5);sim.sbC=Math.max(0,(sim.sbC||0)-dt*.4)}if(v>SB&&!sim.sb){sim.sb=1;sim.sbC=1;sim.shake=Math.max(sim.shake||0,.7);note('SOUND BARRIER BROKEN! BOOM!');P_('flash',sim.x,sim.y,0,0,.5,4,26,0,0);P_('ring',sim.x,sim.y,0,0,1.4,2,60,0,0);P_('ring',sim.x,sim.y,0,0,1.8,1,90,0,0)}else if(v<SB-8&&sim.sb)sim.sb=0;if(v>SB*.93&&v<SB*1.06){sim.sbT=(sim.sbT||0)-dt;if(sim.sbT<=0){sim.sbT=.12;P_('ring',sim.x+3,sim.y,0,0,.5,1,5,0,0)}}}
- {const hands=!window.NOTRIM&&!sim.al&&!K.up&&!K.down&&!MP&&sim.ga>.5&&v>8;if(hands){if(sim.hP==null)sim.hP=sim.th;{const vmin=1.15*Math.sqrt((s.M+sim.fuel*.05)*G/(.05*Math.max(.5,s.S)*(s.a*sE+.12+sim.fl*.3)));if(Math.abs(sim.hP)<1.1){if(v<vmin)sim.hP-=(vmin-v)*.05*dt;else if(v>vmin*1.2)sim.hP+=((sim.hP0==null?sim.th:sim.hP0)-sim.hP)*.4*dt}}sim.tr=Math.max(-.6,Math.min(.6,(sim.tr||0)+(sim.hP-sim.th)*2.5*dt));el=Math.max(-.7,Math.min(.7,(sim.hP-sim.th)*4-sim.om*.8+sim.tr));if(Math.abs(sim.hP)<1.1&&aoa>sE*.85&&aoa<2)el=Math.min(el,-.5)}else{sim.hP=sim.th;sim.hP0=sim.th;sim.tr=(sim.tr||0)*Math.max(0,1-dt*.5)}}if(sim.stall){sim.om-=sg*1.5*dt;sim.shake=Math.max(sim.shake,.15)}
+ if(sim.stall)sim.shake=Math.max(sim.shake,.15);
  const lift=v2*rho*.05*s.S*(CL+.12+sim.fl*.3)*(em.wing?.55:1)*(1-.65*sim.sp)*(1+Math.max(0,1-(sim.y-sim.hg-gh(sim.x))/6)*.15)*(sim.gl>0&&sim.ep<.35&&el<.05&&sim.vy<=.5?.4:1)*(v<1?0:1),drag=v2*rho*(.003*(s.N+(1-sim.gp)*3+sim.dop*2)+s.S*(sim.fl*.012+sim.sp*.035)+s.ki*s.S*CL*CL+(sim.stall?.01*s.S:0))*(1+Math.pow(Math.max(0,(v-200)/60),2)*.8)*(1+1.1*Math.exp(-Math.pow((v-SB)/22,2)))*(1-SLK*(s.AJ||0)*Math.max(0,Math.min(1,(v-90)/120)));
  const pe=Math.max(.4,1-v/300);let thS=0;for(const q of eng0){const z=ENGT[q.t][0]*[.7,1,1.5][q.v==null?1:q.v];thS+=z*(q.dead?0:1)*(q.fire?.55:1)*(PROPT.includes(q.t)?pe:1)*(q.t=='ajet'?1+AFT*Math.max(0,Math.min(1,(sim.ep-.8)/.2)):1)}
  const th=(sim.fuel>0&&sim.on?1:0)*sim.ep*thS*(.4+.6*rho);let Fx=th*Math.cos(sim.th),Fy=th*Math.sin(sim.th);
@@ -477,7 +477,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  const wl=Math.max(0,Math.min(.9,(sim.nw?1-lv.filter(q=>isWing(q.t)).length/sim.nw:0)+(em.wing?.25:0)));
  const kth=0,wash=60*sim.ep*(s.thrust?s.THP/s.thrust:0)*(sim.fuel>0&&sim.on?1:0),qa=(sim.ga>.5?Math.max(v2,60):v2)+wash;
  const qe=qa<9000?qa:9000+(qa-9000)*.04;let al=(qe/900)*(el*2*(1+tl*.5)/(1+Math.pow(Math.max(0,v-150)/140,2))-(ac-kth)*3*(.5+tl*.5)*s.sm-wl*1.4)*Math.sqrt(12/M)-(3.5+Math.max(0,qe-9000)/450)*sim.om;
- sim.om+=al*dt;sim.th+=sim.om*dt;sim.vx+=Fx/M*dt;sim.vy+=Fy/M*dt;sim.x+=sim.vx*dt;sim.y+=sim.vy*dt;
+ if(!sim.al&&!sim.noPilot){const R=PITCH_RATE*Math.min(1,qa/900)*(tl?1:.4)/(1+Math.pow(Math.max(0,v-110)/120,2));sim.om+=(Math.max(-1,Math.min(1,el))*R-wl*.4-sim.om)*Math.min(1,dt*4)}else sim.om+=al*dt;sim.th+=sim.om*dt;sim.vx+=Fx/M*dt;sim.vy+=Fy/M*dt;sim.x+=sim.vx*dt;sim.y+=sim.vy*dt;
  engFx(dt,v);
  // ground
  let mw=1e9,mo=1e9,mq=null;const sn=Math.sin(sim.th),cs=Math.cos(sim.th),wtr0=isWater(sim.x);
@@ -497,6 +497,7 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
    if(hd>17||(Math.abs(sl)>.35&&v>14)||(co&&Math.abs(sim.th)>.7&&v>12)){crashNow(v,hd>17?'Hit the ground too hard ('+(hd*3.6|0)+' km/h straight down)':(Math.abs(sl)>.35&&v>14)?'Flew into a steep slope':'Flipped over on the ground');return}
    sim.comp=Math.max(sim.comp,Math.min(1,hd/12));sim.susv=Math.max(sim.susv||0,Math.min(hd,8)*1.4);tireFx(wh,hd,sn,cs);
    const lw=wh.filter(q=>q.t=='wheel'?hd>13:hd>16);if(lw.length)lose(lw,hd);
+   if(wh.length&&sim.th<-.06&&v>10){const all=sim.live.filter(q=>q.t=='wheel'||q.t=='gear'),fr=all.reduce((m,q)=>!m||q.x>m.x?q:m,null),eff=hd+(-sim.th)*v;if(fr&&wh.includes(fr)&&wh.length<all.length&&eff>9&&!lw.includes(fr)){lose([fr],eff);note('NOSE GEAR BROKE!')}}
    if(bd.length&&(hd>4.5||v>38)){lose(bd,hd);if(hd>9)sim.vy*=.5}
    if(sim.crash>0)return;sim.vy=sl*sim.vx}
   if(cw&&!co)sim.vx-=sim.vx*.012*dt;else sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),(cw?.25:.5)*G*dt);

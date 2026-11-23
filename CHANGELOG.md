@@ -71,3 +71,8 @@
    Gerçek telefonda test edilmedi.
 43. **v1.0.33 – çok yüksek hızda kontroller**: pitch kontrol gücü hıza göre (v²) sınırsız büyüyordu; 330 m/s'de savaş uçağı saniyede 80 rad dönüp takla atıyordu. Şimdi dinamik basınç ~95 m/s üstünde çok az artar, sönümleme hızla artar, elevatör etkisi 150 m/s üstünde azalır. Sonuç: 90/200/330 m/s'de pitch dokunuşu benzer tepki verir, dönme yok, bırakınca açı tutulur. Smoke testi eklendi (3 uçak × 2 hız). Gerçek telefonda test edilmedi.
     (v1.0.33 testi: bazen rastgele kanat kopması testi bozuyordu; dokunuş 0.5 sn → 0.17 sn yapıldı, 60 denemede hata yok.)
+44. **v1.0.34 – pitch artık basit "hız komutu"; otomatik düzeltmeler silindi; burun tekeri kırılır**:
+   - **Pitch**: tuşa basılı tutunca burun sabit hızla döner (0.85 rad/s ≈ 49°/s), bırakınca olduğu açıda durur. Eskiden kısa bir dokunuş 2.5–5 rad/s ile 60–70° döndürüyordu. Tüm uçaklarda (küçük Airmini2, savaş uçakları, yolcu uçakları) aynı his; yüksek hızda (>110 m/s) azalır, düşük hızda (v² < 900) kademeli azalır, kuyruğu olmayan uçakta %40.
+   - **Silindi**: bırakınca otomatik açı tutma/trim, otomatik stall koruması ("burnu indir"), stall'da otomatik burun düşürme, aerodinamik kendiliğinden düzelme (manuel uçuşta). Stall artık pilotun sorunu. Otomatik iniş, pilotsuz (eject) uçak ve hasar etkisi eski fizikle/etkiyle devam eder.
+   - **Burun tekeri**: burun aşağı (> ~3.5°) ve hızlı inişte öndeki tekerlek/iniş takımı tüm yükü alır ve kırılır ("NOSE GEAR BROKE!").
+   - Testler güncellendi (pitch hızı/yüksek hız, burun tekeri, normal iniş sağlam).
