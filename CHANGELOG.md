@@ -77,8 +77,4 @@
    - **Burun tekeri**: burun aşağı (> ~3.5°) ve hızlı inişte öndeki tekerlek/iniş takımı tüm yükü alır ve kırılır ("NOSE GEAR BROKE!").
    - Testler güncellendi (pitch hızı/yüksek hız, burun tekeri, normal iniş sağlam).
 45. **v1.0.35 – kokpitten fırlatma + harita editörü tam harita**: pilot artık uçağın ortasından değil kokpitin (yoksa en öndeki parçanın) bulunduğu yerden, uçağın eğimine göre fırlar. Harita editörü yakınlaştırma ölçeği 6 km'ye göre sabitti; 12 km'lik haritanın tamamı artık başlangıçta görünüyor (zoom 1 = tüm harita). Gerçek telefonda test edilmedi.
-46. **v1.0.36 – gerçekçi kazalar**:
-   - **Parçalar tam hücre değil, kırılarak dağılır**: kazada her parça (dayanıklı motor/iniş takımı hariç çoğunlukla) 2–4 kırık parçaya (üçgen/kama şekilli, kırık kenarlı) bölünür, parçalar dönerek saçılır ve yerde kalır.
-   - **Uçuşta parça yarım kırılabilir**: ağır hasarda (kanat G limiti, sert iniş) kanat/kuyruk/gövde hücresi bazen tamamen kopmaz; yarısı kırılır, kalan yarısı çizilir ve etkisi (kütle, kanat alanı) %55 olur, kopan yarım parça uçar. Aynı parçaya ikinci ağır hasar onu tamamen koparır.
-   - **Patlamalar**: hızlı (>~100 km/h) ve yakıtlı kazada ana patlama + tank/motor sayısına göre gecikmeli ikincil patlamalar, şok halkaları, kıvılcımlar, yakındaki parçalara şok dalgası (savrulma + alev), yerde uzun süre yanan ateş ve duman. Yavaş kazada patlama yok (sadece duman).
-   - Smoke testleri eklendi. Gerçek telefonda test edilmedi.
+46. **v1.0.37 – gerçekçi kaza değişiklikleri geri alındı** (kullanıcı isteği): v1.0.36'daki parça kırılması (kama şekilli kırıklar, yarım kırılan kanat/kuyruk/gövde) ve gecikmeli patlamalar/ateş silindi; kaza yine v1.0.35'teki gibi (tam hücre parçalar + tek patlama). Kod v1.0.35 ile aynı, sadece sürüm numarası yeni.
