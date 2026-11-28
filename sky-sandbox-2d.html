@@ -140,7 +140,7 @@ h1{margin:4px 0}p{margin:4px 0 12px;opacity:.8}
 <div id="ejc" class="hidden"><div class="card"><h2>Eject now?</h2><p>The pilot leaves the plane by parachute. The plane keeps flying without a pilot, and the passengers stay on board.</p><div class="rb2"><button class="btn big" id="ejY" style="background:#ff5252;border-color:#ff8a80;color:#fff">Eject!</button><button class="btn" id="ejN">Stay</button></div></div></div>
 <button id="statsBtn" class="btn big hidden">📊 Show stats</button>
 <div id="mapEd" class="scr hidden"><div id="mTop"><button class="btn" id="mBack">‹ Back</button><b>Map Editor</b><span id="mInfo"></span><span class="sp"></span><button class="btn" id="mUndo">Undo</button><button class="btn" id="mRedo">Redo</button><button class="btn" id="mTest">Test fly</button><button class="btn big" id="mDone">Save</button></div><div id="mBody"><div id="mWrap"><canvas id="mc"></canvas><div id="mNav"><button class="btn" id="mZm">−</button><input type="range" id="mScroll" min="0" max="1000" value="0"><button class="btn" id="mZp">+</button></div></div><div id="mPanel"></div></div></div>
-<span id="ver">v1.0.37 · 2026-11-28 10:14 UTC</span>
+<span id="ver">v1.0.38 · 2026-11-28 10:22 UTC</span>
 <script>
 (()=>{let lt=0;const g=e=>{if(!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||''))e.preventDefault()};document.addEventListener('dblclick',g);document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('#hud,canvas'))e.preventDefault()});document.addEventListener('touchend',e=>{const n=Date.now();if(n-lt<350&&e.target.tagName=='CANVAS')e.preventDefault();lt=n},{passive:false})})();
 const $=id=>document.getElementById(id);
@@ -494,12 +494,13 @@ function step(dt){const s=sim.s;sim.t+=dt;ejStep(dt);if(sim.noPilot){K.up=K.down
  else if(mn<0){const cw=mw<0,co=mo<0,sl=slope(sim.x),into=sim.vy-sl*sim.vx;sim.gnd=cw?1:0;sim.y-=mn;
   if(into<0){const hd=-into,st=sim.st;if(st.up){if(!st.td)st.td={vs:hd,v:Math.hypot(sim.vx,sim.vy),pitch:sim.th,g:1+hd/(G*.2),x:sim.x};else if(st.bounced){st.bounce++;st.bounced=0}st.maxImp=Math.max(st.maxImp,1+hd/(G*.2))}
    const tc=sim.live.filter(q=>btm(q)<.05),bd=tc.filter(q=>q.t!='wheel'&&q.t!='gear'),wh=tc.filter(q=>q.t=='wheel'||q.t=='gear');
-   if(hd>17||(Math.abs(sl)>.35&&v>14)||(co&&Math.abs(sim.th)>.7&&v>12)){crashNow(v,hd>17?'Hit the ground too hard ('+(hd*3.6|0)+' km/h straight down)':(Math.abs(sl)>.35&&v>14)?'Flew into a steep slope':'Flipped over on the ground');return}
+   if(hd>17||(Math.abs(sl)>.35&&v>14)||(co&&Math.abs(sim.th)>.7&&v>12)||(co&&sim.th<sl-.3&&hd>7&&v>15)){crashNow(v,hd>17?'Hit the ground too hard ('+(hd*3.6|0)+' km/h straight down)':(Math.abs(sl)>.35&&v>14)?'Flew into a steep slope':(co&&sim.th<sl-.3&&hd<=17&&Math.abs(sim.th)<=.7)?'Nosed into the ground':'Flipped over on the ground');return}
    sim.comp=Math.max(sim.comp,Math.min(1,hd/12));sim.susv=Math.max(sim.susv||0,Math.min(hd,8)*1.4);tireFx(wh,hd,sn,cs);
    const lw=wh.filter(q=>q.t=='wheel'?hd>13:hd>16);if(lw.length)lose(lw,hd);
    if(wh.length&&sim.th<-.06&&v>10){const all=sim.live.filter(q=>q.t=='wheel'||q.t=='gear'),fr=all.reduce((m,q)=>!m||q.x>m.x?q:m,null),eff=hd+(-sim.th)*v;if(fr&&wh.includes(fr)&&wh.length<all.length&&eff>9&&!lw.includes(fr)){lose([fr],eff);note('NOSE GEAR BROKE!')}}
    if(bd.length&&(hd>4.5||v>38)){lose(bd,hd);if(hd>9)sim.vy*=.5}
    if(sim.crash>0)return;sim.vy=sl*sim.vx}
+  if(co&&sim.th<sl-.05&&v>6){const nz=sim.live.filter(q=>q.t!='wheel'&&q.t!='gear'&&btm(q)<.08).sort((a,b)=>b.x-a.x)[0];if(nz){sim.cr=(sim.cr||0)+v*dt*(.25+Math.min(1,(sl-sim.th))*.6);if(sim.cr>=1){sim.cr=0;lose([nz],7);sim.vx*=.85;if(sim.crash>0)return}}}
   if(cw&&!co)sim.vx-=sim.vx*.012*dt;else sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),(cw?.25:.5)*G*dt);
   if((K.br||(sim.al&&sim.alAir))&&(cw||sim.gl>0)){const bd=(9+Math.abs(sim.vx)*.12)*dt;sim.vx-=Math.sign(sim.vx)*Math.min(Math.abs(sim.vx),bd)}
   const sa=Math.atan(sl);
